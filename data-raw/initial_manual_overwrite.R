@@ -11,34 +11,66 @@ json <- players_fetch_manual_ids() |>
   ) |>
   dplyr::filter(dplyr::if_any(c(pff_id, pfr_id, otc_id), ~ !is.na(.x)))
 
+ff <- nflreadr::load_ff_playerids() |>
+  dplyr::select(gsis_id, pff_id, pfr_id) |>
+  dplyr::filter(dplyr::if_any(c(pff_id, pfr_id), ~ !is.na(.x)))
+
 basis <- players_download("basis")
 
 # PFR ---------------------------------------------------------------------
 
 pfr_ids <- players_download("pfr")
 
-join_pfr <- json |>
+join_pfr <- ff |>
   dplyr::select(gsis_id, pfr_id) |>
   dplyr::filter(!is.na(pfr_id), !is.na(gsis_id)) |>
   dplyr::left_join(pfr_ids, by = "gsis_id") |>
-  dplyr::filter(is.na(pfr_id.y)) |>
-  dplyr::select(gsis_id, pfr_id = pfr_id.x)
+  dplyr::filter(is.na(pfr_id.y) | (pfr_id.x != pfr_id.y)) |>
+  dplyr::mutate(
+    pfr_id = dplyr::case_when(
+      # see list below. I checked all of these mismatches manually
+      gsis_id == "00-0037420" ~ "LassKw00",
+      gsis_id == "00-0036400" ~ "BrowCa01",
+      gsis_id == "00-0035848" ~ "HarrDe09",
+      gsis_id == "00-0034685" ~ "CampCh01",
+      gsis_id == "00-0032050" ~ "MoorCo00",
+      gsis_id == "00-0030500" ~ "WillNi01",
+      gsis_id == "00-0030126" ~ "JohnTJ00",
+      gsis_id == "00-0029435" ~ "JohnDa04",
+      gsis_id == "00-0027959" ~ "TaylPh00",
+      gsis_id == "00-0026364" ~ "JohnSt00",
+      TRUE ~ pfr_id.x
+    )
+  ) |>
+  dplyr::select(gsis_id, pfr_id)
 
+# For these players, the data in this repo's release and the data in
+# load_ff_playerids do not agree
 problematic <- join_pfr |>
-  dplyr::filter(is.na(pfr_id.y))
+  dplyr::filter(pfr_id.x != pfr_id.y)
 
 p <- basis |>
   dplyr::filter(gsis_id %in% problematic$gsis_id)
 
-# 37420 - this repo was correct
-# 35848 - DeMichael Harris is a special case. In the 2020/21 seasons, he is HarrDe09. In 2022 he is HarrDe11. I messaged PFR about that and stick with HarrDe09
-# 29435 - this repo was correct
+# Only solution is manual inspection and documentation
+# 37420 - LassKw00 -> ff is wrong
+# 36400 - BrowCa01 -> ff is right
+# 35848 - DeMichael Harris is a special case. PFR assigned two IDs HarrDe09, and
+#         HarrDe11. I messaged PFR about that and stick with HarrDe09 -> ff is wrong
+# 34685 - CampCh01 -> ff is right
+# 32050 - MoorCo00 -> ff is wrong
+# 30500 - WillNi01 -> ff is right
+# 30126 - JohnTJ00 -> ff is wrong
+# 29435 - JohnDa04 -> ff is wrong
+# 27959 - TaylPh00 -> ff is right -> TaylPh01 seems to be a duplicate smh
+# 26364 - JohnSt00 -> ff is right
 
 saveRDS(join_pfr, "data-raw/manual_pfr.rds")
 
 
 # OTC ---------------------------------------------------------------------
 
+# No otc in ff_playerids, so we use the json file instead
 otc_ids <- players_download("otc")
 
 join_otc <- json |>
@@ -58,22 +90,39 @@ saveRDS(join_otc, "data-raw/manual_otc.rds")
 
 pff_ids <- players_download("otc")
 
-join_pff <- json |>
+join_pff <- ff |>
   dplyr::select(gsis_id, pff_id) |>
   dplyr::filter(!is.na(pff_id), !is.na(gsis_id)) |>
   dplyr::left_join(pff_ids, by = "gsis_id") |>
   dplyr::filter(is.na(pff_id.y) | (pff_id.x != pff_id.y)) |>
-  dplyr::select(gsis_id, tidyselect::starts_with("pff_id")) |>
-  dplyr::select(gsis_id, pff_id = pff_id.x) |>
   dplyr::mutate(
-    pff_id = ifelse(gsis_id == "00-0029435", 7530L, pff_id)
-  )
+    pff_id = dplyr::case_when(
+      # see list below. I checked all of these mismatches manually
+      gsis_id == "00-0035857" ~ 87178L,
+      gsis_id == "00-0035306" ~ 37479L,
+      gsis_id == "00-0034270" ~ 47124L,
+      gsis_id == "00-0029435" ~ 7530L,
+      gsis_id == "00-0027044" ~ 4993L,
+      TRUE ~ as.integer(pff_id.x)
+    )
+  ) |>
+  dplyr::select(gsis_id, pff_id)
 
-# 29435 - this repo was correct
-# 35857 - use dynastyprocess one
+# For these players, the data in this repo's release and the data in
+# load_ff_playerids do not agree
+problematic <- join_pff |>
+  dplyr::filter(pff_id.x != pff_id.y)
+
+p <- basis |>
+  dplyr::filter(gsis_id %in% problematic$gsis_id)
+
+# 35857 - 87178 -> ff is right
+# 35306 - 37479 -> ff is right
+# 34270 - 47124 -> ff is wrong
+# 29435 - 7530 -> ff is wrong
+# 27044 - 4993 -> ff is right
 
 saveRDS(join_pff, "data-raw/manual_pff.rds")
-
 
 # SUMMARY -----------------------------------------------------------------
 
