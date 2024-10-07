@@ -37,5 +37,5 @@ change code.
 
 ## How to Contribute?
 
-Please see the [contribution guide](https://github.com/nflverse/nflverse-players/blob/master/.github/CONTRIBUTING.md) 
+Please see the [contribution guide](.github/CONTRIBUTING.md) 
 for further information.
