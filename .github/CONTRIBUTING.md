@@ -6,7 +6,7 @@ nflverse.players.
 ## Preface
 
 The players dataset maintained by this package aims to be the single source of 
-truth when it come to NFL player IDs across various sources (relevant to the 
+truth when it comes to NFL player IDs across various sources (relevant to the 
 nflverse). The package maintains
 
 - basic player information along with NFL gsis_ids,
@@ -57,7 +57,7 @@ it nicely groups together related IDs.
 
 ### Pull request (PR) process
 
-*NOTE: The follwing bullets describe the workflow in R, but you can also do all
+*NOTE: The following bullets describe the workflow in R, but you can also do all
 of this directly from the browser on the GitHub website*
 
 - Fork the package and clone onto your computer. If you haven't done this before, 
