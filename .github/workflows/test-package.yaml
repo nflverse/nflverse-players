@@ -12,7 +12,7 @@ name: test-package
 permissions: read-all
 
 jobs:
-  test-coverage:
+  test-package:
     runs-on: ubuntu-latest
     env:
       GITHUB_PAT: ${{ secrets.NFLVERSE_GH_TOKEN }}
