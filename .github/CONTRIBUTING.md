@@ -82,10 +82,10 @@ for problems that may have been caused by your changes. Replicated IDs are the
 biggest problem. There are two ways how your PR could introduce replicated 
 IDs:
 
-1.) The IDs you have added are already in the manual overwrite json file. 
+1. The IDs you have added are already in the manual overwrite json file. 
 The file itself then contains replicates.
 
-2.) The IDs you have added create replicates in the full players dataset after
+1. The IDs you have added create replicates in the full players dataset after
 applying the manual overwrite. This means that you have added an ID that is 
 already listed with another player.
 
