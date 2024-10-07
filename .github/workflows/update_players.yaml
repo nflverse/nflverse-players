@@ -60,6 +60,7 @@ jobs:
         type: ["roster", "raw_draft"]
     env:
       GH_TOKEN: ${{ secrets.NFLVERSE_GH_TOKEN }}
+      GITHUB_PAT: ${{ secrets.NFLVERSE_GH_TOKEN }}
       NFLVERSE_UPDATE_SEASON: ${{ matrix.season }}
     steps:
       - uses: actions/checkout@v4
