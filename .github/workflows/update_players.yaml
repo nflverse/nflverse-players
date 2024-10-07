@@ -22,7 +22,7 @@ jobs:
     runs-on: ubuntu-latest
     name: update_setup
     env:
-      GH_TOKEN: ${{ secrets.NFLVERSE_GH_TOKEN }}
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       FULL_REBUILD: ${{ inputs.full_rebuild || false }}
       SEASON_REBUILD: ${{ inputs.season_rebuild || 9999 }}
     outputs:
@@ -59,7 +59,7 @@ jobs:
         season: ${{ fromJson(needs.update_setup.outputs.seasons) }}
         type: ["roster", "raw_draft"]
     env:
-      GH_TOKEN: ${{ secrets.NFLVERSE_GH_TOKEN }}
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       GITHUB_PAT: ${{ secrets.NFLVERSE_GH_TOKEN }}
       NFLVERSE_UPDATE_SEASON: ${{ matrix.season }}
       NFLVERSE_UPDATE_TYPE: ${{ matrix.type }}
@@ -84,7 +84,7 @@ jobs:
       matrix:
         type: ["basis", "pfr", "otc", "draft"]
     env:
-      GH_TOKEN: ${{ secrets.NFLVERSE_GH_TOKEN }}
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       GITHUB_PAT: ${{ secrets.NFLVERSE_GH_TOKEN }}
       NFLVERSE_UPDATE_TYPE: ${{ matrix.type }}
       PLAYERS_PFR_REBUILD: ${{ inputs.full_rebuild || false }}
@@ -110,7 +110,7 @@ jobs:
     strategy:
       fail-fast: false
     env:
-      GH_TOKEN: ${{ secrets.NFLVERSE_GH_TOKEN }}
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       GITHUB_PAT: ${{ secrets.NFLVERSE_GH_TOKEN }}
     steps:
       - uses: actions/checkout@v4
