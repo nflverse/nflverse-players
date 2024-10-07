@@ -53,12 +53,29 @@ players_draft_release <- function(overwrite = !interactive()){
   draft_dir <- file.path(getwd(), "build", "draft")
   if (!dir.exists(draft_dir)) dir.create(draft_dir)
 
+  # returns "failed_{year}" if the scrape failed
   file_paths <- purrr::map_chr(years, function(s, draft_dir){
     save_to <- file.path(draft_dir, paste0("draft_", s, ".rds"))
-    d <- .draft_scrape(s)
+    d <- purrr::possibly(.draft_scrape, otherwise = .draft_template())(s)
+    if (any(is.na(d$draft_year))) return(paste0("failed_", s))
     saveRDS(d, save_to)
     save_to
   }, draft_dir = draft_dir, .progress = FALSE)
+
+  # failed scrapes returned failed_{year}". Capture them here for reporting and
+  # drop the paths. Exit if no files are left
+  # This happens, when we try to scrape a new draft where data isn't ready yet
+  failed_years <- file_paths[grepl("failed_", file_paths)] |>
+    sub("failed_", "", x = _) |>
+    as.integer()
+  file_paths <- file_paths[!grepl("failed_", file_paths)]
+
+  if (length(failed_years) > 0){
+    cli::cli_alert_warning(
+      "Scraping {.val {failed_years}} draft data failed."
+    )
+  }
+  if (length(file_paths) == 0) return(invisible(FALSE))
 
   nflversedata::nflverse_upload(
     file_paths,
@@ -117,6 +134,16 @@ players_draft_release <- function(overwrite = !interactive()){
   cli::cli_progress_done()
 
   tbl
+}
+
+.draft_template <- function(...){
+  tibble::tibble(
+    pfr_id = NA_character_,
+    draft_year = NA_integer_,
+    draft_round = NA_integer_,
+    draft_pick = NA_integer_,
+    draft_team = NA_character_
+  )
 }
 
 .draft_download <- function(overwrite = !interactive()) {
