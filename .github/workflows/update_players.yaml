@@ -1,0 +1,122 @@
+on:
+  schedule:
+    # Every day at 8:00 UTC/4:00 ET
+    - cron:  '0 8 * * *'
+  workflow_dispatch:
+    inputs:
+      season_rebuild:
+        description: 'Rebuild Season (9999 defaults to latest season). Do multiple seasons comma separated, e.g. 2017,2019,2021'
+        required: false
+        default: 9999
+        type: number
+      full_rebuild:
+        description: 'Full Rebuild (overwrites above season)'
+        required: true
+        default: false
+        type: boolean
+
+name: Update Players Components and Data
+
+jobs:
+  update_setup:
+    runs-on: ubuntu-latest
+    name: update_setup
+    env:
+      GH_TOKEN: ${{ secrets.NFLVERSE_GH_TOKEN }}
+      FULL_REBUILD: ${{ inputs.full_rebuild || false }}
+      SEASON_REBUILD: ${{ inputs.season_rebuild || 9999 }}
+    outputs:
+      seasons: ${{ steps.query_seasons.outputs.seasons }}
+    steps:
+      - uses: r-lib/actions/setup-r@v2
+
+      - uses: r-lib/actions/setup-r-dependencies@v2
+        with:
+          packages: nflverse/nflverse-workflows
+
+      - id: query_seasons
+        name: Query Seasons
+        run: |
+          if [ $FULL_REBUILD == true ]
+          then
+            seasons=$( Rscript -e 'nflverse.workflows::get_season_range(1999)' )
+          elif [ $SEASON_REBUILD == 9999 ]
+          then
+            seasons=$( Rscript -e 'nflverse.workflows::get_current_season()' )
+          else
+            seasons="[$SEASON_REBUILD]"
+          fi
+          echo "seasons=$seasons" >> "$GITHUB_OUTPUT"
+
+
+  update_roster_and_draft:
+    needs: update_setup
+    name: Update ${{ matrix.season }} Roster and Draft Data
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        season: ${{ fromJson(needs.update_setup.outputs.seasons) }}
+        type: ["roster", "raw_draft"]
+    env:
+      GH_TOKEN: ${{ secrets.NFLVERSE_GH_TOKEN }}
+      NFLVERSE_UPDATE_SEASON: ${{ matrix.season }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: r-lib/actions/setup-r@v2
+        with:
+          use-public-rspm: true
+          extra-repositories: 'https://nflverse.r-universe.dev'
+      - uses: r-lib/actions/setup-r-dependencies@v2
+        with:
+          extra-packages: local::.
+      - name: Release ${{ matrix.season }} ${{ matrix.type }}
+        run: Rscript -e 'source("build/00_update_roster_and_draft.R")'
+
+  update_components:
+    needs: [update_setup, update_roster_and_draft]
+    name: Update ${{ matrix.type }} Data
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        type: ["basis", "pfr", "otc", "draft"]
+    env:
+      GH_TOKEN: ${{ secrets.NFLVERSE_GH_TOKEN }}
+      GITHUB_PAT: ${{ secrets.NFLVERSE_GH_TOKEN }}
+      NFLVERSE_UPDATE_TYPE: ${{ matrix.type }}
+      PLAYERS_PFR_REBUILD: ${{ inputs.full_rebuild || false }}
+      PLAYERS_PFR_BASE: ${{ secrets.PLAYERS_PFR_BASE }}
+      PLAYERS_OTC_PLAYERID_ENDPOINT: ${{ secrets.PLAYERS_OTC_PLAYERID_ENDPOINT }}
+      PLAYERS_OTC_API_KEY: ${{ secrets.PLAYERS_OTC_API_KEY }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: r-lib/actions/setup-r@v2
+        with:
+          use-public-rspm: true
+          extra-repositories: 'https://nflverse.r-universe.dev'
+      - uses: r-lib/actions/setup-r-dependencies@v2
+        with:
+          extra-packages: local::.
+      - name: Release ${{ matrix.type }}
+        run: Rscript -e 'source("build/01_update_components.R")'
+
+  build_dataset:
+    needs: [update_components]
+    name: Build Full Dataset
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+    env:
+      GH_TOKEN: ${{ secrets.NFLVERSE_GH_TOKEN }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: r-lib/actions/setup-r@v2
+        with:
+          use-public-rspm: true
+          extra-repositories: 'https://nflverse.r-universe.dev'
+      - uses: r-lib/actions/setup-r-dependencies@v2
+        with:
+          extra-packages: local::.
+      - name: Release Players Data
+        run: Rscript -e 'nflverse.players::players_build_dataset(release = TRUE)'
