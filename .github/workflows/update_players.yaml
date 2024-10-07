@@ -110,6 +110,7 @@ jobs:
       fail-fast: false
     env:
       GH_TOKEN: ${{ secrets.NFLVERSE_GH_TOKEN }}
+      GITHUB_PAT: ${{ secrets.NFLVERSE_GH_TOKEN }}
     steps:
       - uses: actions/checkout@v4
       - uses: r-lib/actions/setup-r@v2
