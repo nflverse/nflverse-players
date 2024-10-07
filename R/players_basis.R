@@ -81,6 +81,8 @@ players_basis_release <- function(overwrite = !interactive()){
     save_to
   }, roster_dir = roster_dir, .progress = TRUE)
 
+  cli::cli_alert_info("Saved the following files: {.path {file_paths}}")
+
   nflversedata::nflverse_upload(
     file_paths,
     tag = "raw_roster",
