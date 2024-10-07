@@ -4,3 +4,4 @@
 ^build$
 ^data-raw$
 ^players_manual_overwrite\.json$
+^\.github$
