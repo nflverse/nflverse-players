@@ -51,7 +51,7 @@ jobs:
 
   update_roster_and_draft:
     needs: update_setup
-    name: Update ${{ matrix.season }} Roster and Draft Data
+    name: Update ${{ matrix.season }} ${{ matrix.type }} data
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
@@ -75,7 +75,7 @@ jobs:
 
   update_components:
     needs: [update_setup, update_roster_and_draft]
-    name: Update ${{ matrix.type }} Data
+    name: Update ${{ matrix.type }} data
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
