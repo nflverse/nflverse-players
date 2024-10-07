@@ -31,7 +31,8 @@ Suggests:
     testthat (>= 3.0.0)
 Remotes:
     nflapi=nflverse/nflapi,
-    nflversedata=nflverse/nflverse-data
+    nflversedata=nflverse/nflverse-data,
+    nflreadr=nflverse/nflreadr
 Config/testthat/edition: 3
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
