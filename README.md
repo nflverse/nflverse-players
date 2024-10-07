@@ -25,7 +25,8 @@ The main functions of this package are
 - `players_download()`     : download components from the `players_components` release tag of this repo
 
 Basis, draft, otc, and pfr data are released to the `players_components` release 
-tag of this repo
+tag of this repo. Data updates automatically over night (draft data only in the 
+days around the draft).
 
 Since the workflows can't be perfect, there will always be mismatches or missing 
 IDs. The package provides a solution for this problem. The ultimate source of truth 
