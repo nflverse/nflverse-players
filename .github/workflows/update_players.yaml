@@ -15,7 +15,7 @@ on:
         default: false
         type: boolean
 
-name: Update Players Components and Data
+name: Update Players Data
 
 jobs:
   update_setup:
