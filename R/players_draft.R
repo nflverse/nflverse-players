@@ -196,3 +196,15 @@ players_draft_release <- function(overwrite = !interactive()){
 
   raw_files
 }
+
+# This is used to decide wether or not we should try to srape draft data
+# First Day of draft is on a Thursday at the end of April. I was lazy and decided
+# to start April 23rd (this should be the earliest date?) and then run draft
+# scrapers for two weeks. Future will tell if this catches all draft dates.
+.draft_date_range <- function(){
+  sys_year <- Sys.Date() |> format("%Y")
+  first_day <- paste(sys_year, "04", "23", sep = "-") |> as.Date()
+  draft_range <- seq(first_day, first_day + 14, by = 1)
+  draft_range
+}
+
