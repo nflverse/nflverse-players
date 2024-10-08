@@ -28,7 +28,7 @@ mapping. The data contains the following variables (example values from Eli Mann
 \itemize{
 \item{otc_id (865)}
 \item{nfl_player_id (2505996)}
-\item{ebdid (MAN473170)}
+\item{esbid (MAN473170)}
 \item{gsis_id (00-0022803)}
 \item{gsis_it_id (28953)}
 \item{pff_id (1722)}

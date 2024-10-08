@@ -1,7 +1,7 @@
 #' Release Full Players Dataset
 #'
-#' Download all components of the players dataset and comnine them to the full
-#' datset. The function calls [players_validate()] internally to make sure, clean
+#' Download all components of the players dataset and combine them to the full
+#' dataset. The function calls [players_validate()] internally to make sure, clean
 #' data will be released.
 #' Currently, the following components will be joined:
 #' \itemize{
@@ -81,7 +81,7 @@ players_build_dataset <- function(release = FALSE){
       nflverse_type = "nflverse Players Data",
       release_tag = "players_components",
       file_types = c("rds", "csv", "parquet", "qs", "csv.gz"),
-      repo = "nflverse/nflverse-players"
+      repo = "nflverse/nflverse-data"
     )
   } else if (isTRUE(release) && is_replicated(check)) {
     cli::cli_alert_warning(
