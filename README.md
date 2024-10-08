@@ -20,6 +20,7 @@ The main functions of this package are
 - `players_basis_release()`: create and release basis data (basic player info and gsis_ids)
 - `players_draft_release()`: scrape and release draft information (round, pick, team, year)
 - `players_otc_release()`  : fetch and release player IDs from overthecap (otc_id and pff_id)
+- `players_pff_release()`  : release pff players data (joinable through pff_id)
 - `players_pfr_release()`  : create and release pfr player IDs (joinable through gsis_id)
 - `players_validate()`     : dataset check that searches for replicated IDs
 - `players_download()`     : download components from the `players_components` release tag of this repo
