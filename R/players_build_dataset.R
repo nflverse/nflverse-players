@@ -81,7 +81,7 @@ players_build_dataset <- function(release = FALSE){
       nflverse_type = "nflverse Players Data",
       release_tag = "players_components",
       file_types = c("rds", "csv", "parquet", "qs", "csv.gz"),
-      repo = "nflverse/nflverse-players"
+      repo = "nflverse/nflverse-data"
     )
   } else if (isTRUE(release) && is_replicated(check)) {
     cli::cli_alert_warning(
