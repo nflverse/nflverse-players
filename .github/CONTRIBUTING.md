@@ -10,18 +10,19 @@ truth when it comes to NFL player IDs across various sources (relevant to the
 nflverse). The following source IDs and information are considered in-scope for 
 nflverse.players:
 
-- Basic player information eg name, height, weight, age, date of birth, years experience, status, headshot image (mostly from GSIS)
-- Draft information: draft year, draft round, draft pick, draft overall, draft team, college (mostly from PFR)
-- Position information (mostly from PFF)
+- Basic player information e.g. name, height, weight, age, date of birth, 
+years experience, college, status, position, headshot image (mostly from GSIS)
+- Draft information: draft year, draft round, draft pick, draft team (from PFR)
+- PFF position and status information
 - Primary source IDs from:
-  - NFL (gsis_id, gsis_it_id, smart_id) - gsis_id is the primary key
-  - Pro Football Reference (pfr_id)
-  - ProFootballFocus (pff_id)
-  - OverTheCap (otc_id)
+  - NFL (`gsis_id`, `smart_id`) - `gsis_id` is the primary key
+  - Pro Football Reference (`pfr_id`)
+  - ProFootballFocus (`pff_id`)
+  - OverTheCap (`otc_id`)
   - Elias Sports Bureau (esb_id)
   <!-- potential sources?
-  - ESPN (espn_id)
-  - SportRadar (sportradar_id)
+  - ESPN (`espn_id`)
+  - SportRadar (`sportradar_id`)
   -->
 
 Of note, the following sources are considered _not_ in the nflverse.players scope:
