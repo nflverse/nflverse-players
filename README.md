@@ -12,6 +12,12 @@ This repo manages code and data to create players data available through
 nflreadr::load_players()
 ```
 
+## Scope
+
+We have a clear definition of which sources we include in the scope of 
+nflverse.players. 
+You can find the definition in our [contribution guide](.github/CONTRIBUTING.md) 
+
 ## Overview
 
 The main functions of this package are
