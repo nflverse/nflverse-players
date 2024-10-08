@@ -17,9 +17,9 @@ years experience, college, status, position, headshot image (mostly from GSIS)
 - Primary source IDs from:
   - NFL (`gsis_id`, `smart_id`) - `gsis_id` is the primary key
   - Pro Football Reference (`pfr_id`)
-  - ProFootballFocus (`pff_id`)
-  - OverTheCap (`otc_id`)
-  - Elias Sports Bureau (esb_id)
+  - Pro Football Focus (`pff_id`)
+  - Over The Cap (`otc_id`)
+  - Elias Sports Bureau (`esb_id`)
   <!-- potential sources?
   - ESPN (`espn_id`)
   - SportRadar (`sportradar_id`)
