@@ -1,7 +1,7 @@
 #' Release Full Players Dataset
 #'
-#' Download all components of the players dataset and comnine them to the full
-#' datset. The function calls [players_validate()] internally to make sure, clean
+#' Download all components of the players dataset and combine them to the full
+#' dataset. The function calls [players_validate()] internally to make sure, clean
 #' data will be released.
 #' Currently, the following components will be joined:
 #' \itemize{

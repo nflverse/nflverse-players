@@ -11,7 +11,7 @@ Parse json file maintained for manual overwrites of player IDs.
 }
 \details{
 The function searches for the file \code{players_manual_overwrite.json} in the
-installed packafe directory. If the file doesn't exist for some reason, the
+installed package directory. If the file doesn't exist for some reason, the
 function will download the file from
 \url{https://github.com/nflverse/nflverse-players/raw/refs/heads/master/inst/players_manual_overwrite.json}
 }
