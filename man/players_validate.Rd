@@ -13,15 +13,15 @@ The variable names must be one of gsis_id, pfr_id, pff_id, and otc_id.}
 \item{verbose}{If \code{TRUE}, will print success messages and a summary.}
 }
 \value{
-Returns \code{data}. Replicated observations will be attached in attributes.
+Returns \code{data}. duplicated observations will be attached in attributes.
 }
 \description{
-Search for replicated player IDs in a table and attach them to the input data.
+Search for duplicated player IDs in a table and attach them to the input data.
 The function automatically loops over the player ID variable names
-gsis_id, pfr_id, pff_id, and otc_id and searches for replicated IDs in each
+gsis_id, pfr_id, pff_id, and otc_id and searches for duplicated IDs in each
 of these variables.
 }
 \seealso{
-\code{\link[=players_validate_extract_replicated]{players_validate_extract_replicated()}} to extract tables of
-replicated IDs from attributes.
+\code{\link[=players_validate_extract_duplicated]{players_validate_extract_duplicated()}} to extract tables of
+duplicated IDs from attributes.
 }

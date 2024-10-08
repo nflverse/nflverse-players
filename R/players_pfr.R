@@ -57,7 +57,7 @@ players_pfr_release <- function(players_pfr_full_rebuild = Sys.getenv("PLAYERS_P
     .pfr_join(pfr_basis, by = "name_rookie_season") |>
     .pfr_join(pfr_basis, by = "name") |>
     .pfr_join(pfr_basis, by = "first_last") |>
-    remove_replicated("pfr_id") |>
+    remove_duplicated("pfr_id") |>
     strip_nflverse_attributes() |>
     tibble::as_tibble()
 
@@ -128,7 +128,7 @@ players_pfr_release <- function(players_pfr_full_rebuild = Sys.getenv("PLAYERS_P
         pfr_basis |> dplyr::select(pfr_id, join_name, rookie_season),
         by = c("join_name", "rookie_season"),
       ) |>
-      remove_replicated("gsis_id") |>
+      remove_duplicated("gsis_id") |>
       dplyr::filter(!is.na(pfr_id))
 
     if (isTRUE(verbose)){
@@ -146,7 +146,7 @@ players_pfr_release <- function(players_pfr_full_rebuild = Sys.getenv("PLAYERS_P
         pfr_basis |> dplyr::select(pfr_id, join_name),
         by = c("join_name"),
       ) |>
-      remove_replicated("gsis_id") |>
+      remove_duplicated("gsis_id") |>
       dplyr::filter(!is.na(pfr_id))
 
     if (isTRUE(verbose)){
@@ -168,7 +168,7 @@ players_pfr_release <- function(players_pfr_full_rebuild = Sys.getenv("PLAYERS_P
         pfr_basis |> dplyr::select(pfr_id, join_name),
         by = c("join_name"),
       ) |>
-      remove_replicated("gsis_id") |>
+      remove_duplicated("gsis_id") |>
       dplyr::filter(!is.na(pfr_id))
 
     if (isTRUE(verbose)){

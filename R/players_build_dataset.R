@@ -21,17 +21,17 @@ players_build_dataset <- function(release = FALSE){
   basis <- players_download("basis")
 
   pfr <- players_download("pfr") |>
-    remove_replicated("pfr_id")
+    remove_duplicated("pfr_id")
 
   pff <- players_download("pff") |>
-    remove_replicated("pff_id")
+    remove_duplicated("pff_id")
 
   otc <- players_download("otc") |>
     dplyr::mutate(dplyr::across(c(otc_id, pff_id), as.integer)) |>
     dplyr::filter(!is.na(gsis_id)) |>
     # otc has some duplicates IDs. We have to remove them here
-    remove_replicated("gsis_id") |>
-    remove_replicated("pff_id")
+    remove_duplicated("gsis_id") |>
+    remove_duplicated("pff_id")
 
   draft <- players_download("draft") |>
     dplyr::filter(!is.na(pfr_id)) |>
@@ -64,7 +64,7 @@ players_build_dataset <- function(release = FALSE){
 
   check <- players_validate(players_full)
 
-  if (isTRUE(release) && !is_replicated(check)){
+  if (isTRUE(release) && !is_duplicated(check)){
     cli::cli_alert_info(
       "Release full dataset to the {.pkg players_components} \\
       tag in the {.pkg nflverse/nflverse-players} repo"
@@ -87,16 +87,16 @@ players_build_dataset <- function(release = FALSE){
       file_types = c("rds", "csv", "parquet", "qs", "csv.gz"),
       repo = "nflverse/nflverse-data"
     )
-  } else if (isTRUE(release) && is_replicated(check)) {
+  } else if (isTRUE(release) && is_duplicated(check)) {
     cli::cli_alert_warning(
-      "Cannot release dataset because it contains replicated rows. \\
-      Try {.fun players_validate} to identify the replicated rows and \\
+      "Cannot release dataset because it contains duplicated rows. \\
+      Try {.fun players_validate} to identify the duplicated rows and \\
       variables."
     )
-  } else if (is_replicated(check)) {
+  } else if (is_duplicated(check)) {
     cli::cli_alert_warning(
-      "Dataset contains replicated rows. Try {.fun players_validate} \\
-      to identify the replicated rows and variables."
+      "Dataset contains duplicated rows. Try {.fun players_validate} \\
+      to identify the duplicated rows and variables."
     )
   }
 

@@ -7,17 +7,17 @@ strip_nflverse_attributes <- function(df){
   df
 }
 
-remove_replicated <- function(df,
+remove_duplicated <- function(df,
                               id = relevant_ids(),
                               verbose = FALSE){
   id <- rlang::arg_match(id)
-  mults <- identify_replicated(df = df, id = id, verbose = verbose)
+  mults <- identify_duplicated(df = df, id = id, verbose = verbose)
   df |>
     dplyr::filter(!is.na(.data[[id]])) |>
     dplyr::filter(dplyr::n() == 1, .by = {{ id }})
 }
 
-identify_replicated <- function(df,
+identify_duplicated <- function(df,
                                 id = relevant_ids(),
                                 verbose = TRUE){
   id <- rlang::arg_match(id)
@@ -26,7 +26,7 @@ identify_replicated <- function(df,
     dplyr::filter(dplyr::n() > 1, .by = {{ id }}) |>
     dplyr::arrange(.data[[id]])
   if (nrow(mults) > 0 && isTRUE(verbose)){
-    cli::cli_alert_warning("Found replicated {.val {id}s}")
+    cli::cli_alert_warning("Found duplicated {.val {id}s}")
     print(mults)
   }
   invisible(mults)

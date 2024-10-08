@@ -46,11 +46,11 @@ join_pfr <- ff |>
 
 # For these players, the data in this repo's release and the data in
 # load_ff_playerids do not agree
-replicated <- join_pfr |>
+duplicated <- join_pfr |>
   dplyr::filter(pfr_id.x != pfr_id.y)
 
 p <- basis |>
-  dplyr::filter(gsis_id %in% replicated$gsis_id)
+  dplyr::filter(gsis_id %in% duplicated$gsis_id)
 
 # Only solution is manual inspection and documentation
 # 37420 - LassKw00 -> ff is wrong
@@ -110,11 +110,11 @@ join_pff <- ff |>
 
 # For these players, the data in this repo's release and the data in
 # load_ff_playerids do not agree
-replicated <- join_pff |>
+duplicated <- join_pff |>
   dplyr::filter(pff_id.x != pff_id.y)
 
 p <- basis |>
-  dplyr::filter(gsis_id %in% replicated$gsis_id)
+  dplyr::filter(gsis_id %in% duplicated$gsis_id)
 
 # 35857 - 87178 -> ff is right
 # 35306 - 37479 -> ff is right
