@@ -10,6 +10,12 @@ test_that("pfr data is not replicated", {
   expect_false(is_replicated(check))
 })
 
+test_that("pff data is not replicated", {
+  data <- players_download("pff")
+  check <- players_validate(data)
+  expect_false(is_replicated(check))
+})
+
 test_that("manual overwrite is not replicated", {
   data <- players_fetch_manual_ids()
   check <- players_validate(data)
