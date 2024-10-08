@@ -12,6 +12,6 @@ if (type == "roster"){
   if (Sys.Date() %in% nflverse.players:::.draft_date_range()){
     out <- nflverse.players::.draft_release_season(years = season)
   }
-} else if (type == "raw_pff" && .pff_is_valid_season(season)){
+} else if (type == "raw_pff" && nflverse.players:::.pff_is_valid_season(season)){
   out <- nflverse.players::.pff_release_raw_players(seasons = season)
 }
