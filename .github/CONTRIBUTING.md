@@ -26,7 +26,7 @@ nflverse.players:
 
 Of note, the following sources are considered _not_ in the nflverse.players scope:
   - FantasyData
-  - Draft Kings
+  - DraftKings
   - FanDuel
   - Sleeper
   - Fleaflicker
