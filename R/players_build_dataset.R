@@ -23,8 +23,8 @@ players_build_dataset <- function(release = FALSE){
   pfr <- players_download("pfr") |>
     remove_replicated("pfr_id")
 
-  # at the moment, we take pff ids from the otc dataset
-  # pff <- players_download("pff")
+  pff <- players_download("pff") |>
+    remove_replicated("pff_id")
 
   otc <- players_download("otc") |>
     dplyr::mutate(dplyr::across(c(otc_id, pff_id), as.integer)) |>
@@ -50,6 +50,10 @@ players_build_dataset <- function(release = FALSE){
     dplyr::left_join(
       otc |> dplyr::select(gsis_id, pff_id, otc_id),
       by = "gsis_id"
+    ) |>
+    dplyr::left_join(
+      pff |> dplyr::select(pff_id, pff_position, pff_status),
+      by = "pff_id"
     ) |>
     dplyr::left_join(
       draft, by = "pfr_id"
