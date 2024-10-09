@@ -28,10 +28,11 @@ The main functions of this package are
 - `players_otc_release()`  : fetch and release player IDs from overthecap (otc_id and pff_id)
 - `players_pff_release()`  : release pff players data (joinable through pff_id)
 - `players_pfr_release()`  : create and release pfr player IDs (joinable through gsis_id)
+- `players_espn_release()` : create and release espn player IDs (joinable through gsis_id)
 - `players_validate()`     : dataset check that searches for duplicated IDs
 - `players_download()`     : download components from the `players_components` release tag of this repo
 
-Basis, draft, otc, and pfr data are released to the `players_components` release 
+Basis, draft, otc, pfr, and espn data are released to the `players_components` release 
 tag of this repo. Data updates automatically over night (draft data only in the 
 days around the draft).
 

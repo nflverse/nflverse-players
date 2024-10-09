@@ -3,17 +3,18 @@
 #' Downloads players component files from the release tag `players_components`
 #' of the nflverse-players repo
 #'
-#' @param type One of `"basis"`, `"pfr"`, `"pff"`, `"otc"`, `"full"`
+#' @param type One of `"basis"`, `"pfr"`, `"pff"`, `"otc"`, `"espn"`, `"draft"`, `"full"`
 #'
 #' @return A dataframe with players data
 #' @export
-players_download <- function(type = c("basis", "pfr", "otc", "pff", "draft", "full")){
+players_download <- function(type = c("basis", "pfr", "otc", "pff", "espn", "draft", "full")){
   type <- rlang::arg_match(type)
   available_files <- c(
     "basis" = "players_basis.rds",
     "pfr" = "players_pfr.rds",
     "otc" = "players_otc.rds",
     "pff" = "players_pff.rds",
+    "espn" = "players_espn.rds",
     "draft" = "players_draft.rds",
     "full" = "players_full.rds"
   )

@@ -32,4 +32,4 @@ identify_duplicated <- function(df,
   invisible(mults)
 }
 
-relevant_ids <- function() c("gsis_id", "pfr_id", "pff_id", "otc_id")
+relevant_ids <- function() c("gsis_id", "pfr_id", "pff_id", "otc_id", "espn_id")
