@@ -8,7 +8,7 @@ players_validate(data, verbose = FALSE)
 }
 \arguments{
 \item{data}{A data frame, tibble, or data.table consisting of player IDs.
-The variable names must be one of gsis_id, pfr_id, pff_id, and otc_id.}
+The variable names must be one of gsis_id, pfr_id, pff_id, otc_id, and espn_id.}
 
 \item{verbose}{If \code{TRUE}, will print success messages and a summary.}
 }
@@ -18,7 +18,7 @@ Returns \code{data}. duplicated observations will be attached in attributes.
 \description{
 Search for duplicated player IDs in a table and attach them to the input data.
 The function automatically loops over the player ID variable names
-gsis_id, pfr_id, pff_id, and otc_id and searches for duplicated IDs in each
+gsis_id, pfr_id, pff_id, otc_id, and espn_id and searches for duplicated IDs in each
 of these variables.
 }
 \seealso{

@@ -4,10 +4,12 @@
 \alias{players_download}
 \title{Download Players Components}
 \usage{
-players_download(type = c("basis", "pfr", "otc", "pff", "draft", "full"))
+players_download(
+  type = c("basis", "pfr", "otc", "pff", "espn", "draft", "full")
+)
 }
 \arguments{
-\item{type}{One of \code{"basis"}, \code{"pfr"}, \code{"pff"}, \code{"otc"}, \code{"full"}}
+\item{type}{One of \code{"basis"}, \code{"pfr"}, \code{"pff"}, \code{"otc"}, \code{"espn"}, \code{"draft"}, \code{"full"}}
 }
 \value{
 A dataframe with players data

@@ -10,7 +10,7 @@ players_validate_extract_duplicated(data, id = relevant_ids())
 \item{data}{A data frame that was checked with \link{players_validate}}
 
 \item{id}{ID to extract a table of duplicates. Must be one of
-gsis_id, pfr_id, pff_id, and otc_id}
+gsis_id, pfr_id, pff_id, otc_id, and espn_id}
 }
 \value{
 A table of duplicated IDs, sorted by value of \code{id}
