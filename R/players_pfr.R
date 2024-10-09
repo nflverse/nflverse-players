@@ -62,7 +62,7 @@ players_pfr_release <- function(players_pfr_full_rebuild = Sys.getenv("PLAYERS_P
     tibble::as_tibble()
 
   # ONLY FOR DEV WORK
-  missing <- players_pfr |> dplyr::filter(is.na(pfr_id))
+  missing <- players_basis |> dplyr::filter(!gsis_id %in% players_pfr$gsis_id)
 
   # THE MAPPING REALLY ONLY LISTS GSIS ID AND PFR ID
   pfr_mapping <- players_pfr |>
@@ -105,9 +105,9 @@ players_pfr_release <- function(players_pfr_full_rebuild = Sys.getenv("PLAYERS_P
 }
 
 .pfr_join <- function(players_basis,
-                     pfr_basis,
-                     by = c("name_rookie_season", "name", "first_last"),
-                     verbose = getOption("players_pfr_join.verbose", TRUE)){
+                      pfr_basis,
+                      by = c("name_rookie_season", "name", "first_last"),
+                      verbose = getOption("players_pfr_join.verbose", TRUE)){
 
   by <- rlang::arg_match(by)
 
@@ -119,6 +119,13 @@ players_pfr_release <- function(players_pfr_full_rebuild = Sys.getenv("PLAYERS_P
     pfr_basis$full_name,
     lowercase = TRUE
   )
+
+  # WE HAVE TO AVOID MATCHING IDs THAT HAVE BEEN MATCHED IN PREVIOUS JOINS
+  # THAT'S WHY WE UPDATE PFR_BASIS HERE TO LIST ONLY UNMATCHED PFR_IDs
+  # OTHERWISE WE COULD UNINTENTIONALLY CREATE DUPLICATES THAT WILL BE REMOVED
+  # LATER ON
+  pfr_basis <- pfr_basis |>
+    dplyr::filter(!pfr_id %in% players_basis$pfr_id)
 
   if (by == "name_rookie_season"){
     joined <- players_basis |>
