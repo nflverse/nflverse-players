@@ -26,6 +26,9 @@ players_build_dataset <- function(release = FALSE){
   pff <- players_download("pff") |>
     remove_duplicated("pff_id")
 
+  espn <- players_download("espn") |>
+    remove_duplicated("espn_id")
+
   otc <- players_download("otc") |>
     dplyr::mutate(dplyr::across(c(otc_id, pff_id), as.integer)) |>
     dplyr::filter(!is.na(gsis_id)) |>
@@ -48,6 +51,10 @@ players_build_dataset <- function(release = FALSE){
       by = "gsis_id"
     ) |>
     dplyr::left_join(
+      espn,
+      by = "gsis_id"
+    ) |>
+    dplyr::left_join(
       otc |> dplyr::select(gsis_id, pff_id, otc_id),
       by = "gsis_id"
     ) |>
@@ -58,7 +65,7 @@ players_build_dataset <- function(release = FALSE){
     dplyr::left_join(
       draft, by = "pfr_id"
     ) |>
-    dplyr::relocate(pfr_id, pff_id, otc_id, .after = esb_id) |>
+    dplyr::relocate(pfr_id, pff_id, otc_id, espn_id, .after = esb_id) |>
     players_manual_overwrite() |>
     dplyr::arrange(last_name, first_name, gsis_id)
 

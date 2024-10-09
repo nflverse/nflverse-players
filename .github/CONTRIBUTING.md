@@ -20,8 +20,8 @@ years experience, college, status, position, headshot image (mostly from GSIS)
   - Pro Football Focus (`pff_id`)
   - Over The Cap (`otc_id`)
   - Elias Sports Bureau (`esb_id`)
-  <!-- potential sources?
   - ESPN (`espn_id`)
+  <!-- potential sources?
   - SportRadar (`sportradar_id`)
   -->
 
