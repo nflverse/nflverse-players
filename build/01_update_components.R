@@ -1,5 +1,5 @@
 type <- Sys.getenv("NFLVERSE_UPDATE_TYPE", unset = NA_character_)
-type <- rlang::arg_match0(type, c("basis", "pfr", "otc", "draft", "pff"))
+type <- rlang::arg_match0(type, c("basis", "pfr", "otc", "draft", "pff", "espn"))
 
 if (type == "basis"){
   out <- nflverse.players::players_basis_release()
@@ -13,4 +13,6 @@ if (type == "basis"){
   out <- nflverse.players::players_draft_release()
 } else if (type == "pff"){
   out <- nflverse.players::players_pff_release()
+} else if (type == "espn"){
+  out <- nflverse.players::players_espn_release()
 }
