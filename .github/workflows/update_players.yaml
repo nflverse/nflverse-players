@@ -88,6 +88,7 @@ jobs:
       GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       GITHUB_PAT: ${{ secrets.NFLVERSE_GH_TOKEN }}
       NFLVERSE_UPDATE_TYPE: ${{ matrix.type }}
+      PLAYERS_ESPN_REBUILD: ${{ inputs.full_rebuild || false }}
       PLAYERS_PFR_REBUILD: ${{ inputs.full_rebuild || false }}
       PLAYERS_PFR_BASE: ${{ secrets.PLAYERS_PFR_BASE }}
       PLAYERS_OTC_PLAYERID_ENDPOINT: ${{ secrets.PLAYERS_OTC_PLAYERID_ENDPOINT }}
