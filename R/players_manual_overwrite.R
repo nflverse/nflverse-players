@@ -150,8 +150,8 @@ players_manual_ids_clean <- function(manual_ids = players_manual_ids_fetch()){
 
 overwrite <- function(original_vec, replacement_vec){
   # IF THE REPLACEMENT VALUE IS
-  # NAN -> WE WANT TO SET THE REPLACEMENT TO NA
-  # NA  -> WE WANT TO KEEP THE ORIGINAL VALUE
+  # "" -> WE WANT TO SET THE REPLACEMENT TO NA, I.E. REMOVE THE ORIGINAL VALUE!
+  # NA -> WE WANT TO KEEP THE ORIGINAL VALUE
   # OTEHRWISE WE USE THE REPLACEMENT VALUE
   replacement <- unname(replacement_vec[names(original_vec)])
 
