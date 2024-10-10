@@ -7,7 +7,7 @@
 players_manual_overwrite(
   players_df,
   manual_ids = players_fetch_manual_ids(),
-  ids_to_replace = c("pff_id", "pfr_id", "otc_id")
+  ids_to_replace = overwrite_ids()
 )
 }
 \arguments{
@@ -18,7 +18,8 @@ variables listed in \code{ids_to_replace}}
 variables listed in \code{ids_to_replace}. This defaults to the output of
 \code{\link[=players_fetch_manual_ids]{players_fetch_manual_ids()}}.}
 
-\item{ids_to_replace}{Variable names where replacement should be performed}
+\item{ids_to_replace}{Variable names where replacement should be performed.
+Defaults to gsis_id, pfr_id, pff_id, otc_id, and espn_id}
 }
 \value{
 Returns \code{players_df} with new values from \code{manual_ids}
