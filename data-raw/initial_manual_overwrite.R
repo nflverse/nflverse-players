@@ -4,7 +4,7 @@
 
 # Initially loaded from
 # "https://github.com/dynastyprocess/data/raw/refs/heads/master/files/missing_ids.json"
-json <- players_fetch_manual_ids() |>
+json <- players_manual_ids_fetch() |>
   dplyr::arrange(dplyr::desc(gsis_id)) |>
   dplyr::select(
     gsis_id, pff_id, pfr_id, otc_id
