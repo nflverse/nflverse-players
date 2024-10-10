@@ -25,6 +25,7 @@ players_download <- function(type = c("basis", "pfr", "otc", "pff", "espn", "dra
     fsep = "/"
   )
 
-  out <- nflreadr::rds_from_url(load_from)
+  out <- nflreadr::rds_from_url(load_from) |>
+    .convert_ids()
   strip_nflverse_attributes(out)
 }
