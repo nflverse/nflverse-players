@@ -35,6 +35,12 @@ test_that("manual overwrite does not create duplicates", {
   expect_false(is_duplicated(check))
 })
 
+test_that("manual overwrite is clean", {
+  manual_ids <- players_fetch_manual_ids()
+  cleaned <- players_clean_manual_ids(manual_ids)
+  expect_identical(cleaned, manual_ids)
+})
+
 test_that("complete dataset is not duplicated", {
   data <- players_build_dataset(release = FALSE)
   check <- players_validate(data)
