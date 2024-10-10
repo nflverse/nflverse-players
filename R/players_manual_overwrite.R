@@ -10,14 +10,14 @@
 #' variables listed in `ids_to_replace`
 #' @param manual_ids A data.frame with the variables `gsis_id` and at least the
 #' variables listed in `ids_to_replace`. This defaults to the output of
-#' [players_fetch_manual_ids()].
+#' [players_manual_ids_fetch()].
 #' @param ids_to_replace Variable names where replacement should be performed.
 #' Defaults to `r cli::ansi_collapse(relevant_ids())`
 #'
 #' @return Returns `players_df` with new values from `manual_ids`
 #' @export
 players_manual_overwrite <- function(players_df,
-                                     manual_ids = players_fetch_manual_ids(),
+                                     manual_ids = players_manual_ids_fetch(),
                                      ids_to_replace = overwrite_ids()){
   for (id_name in ids_to_replace) {
     original <- players_df[[id_name]] |> rlang::set_names(players_df[["gsis_id"]])
@@ -38,7 +38,7 @@ players_manual_overwrite <- function(players_df,
 #' <https://github.com/nflverse/nflverse-players/raw/refs/heads/master/inst/players_manual_overwrite.json>
 #'
 #' @export
-players_fetch_manual_ids <- function(){
+players_manual_ids_fetch <- function(){
   local_file <- system.file("players_manual_overwrite.json", package = "nflverse.players")
   if (file.exists(local_file)) {
     return(.players_read_json(local_file))
@@ -62,7 +62,7 @@ players_fetch_manual_ids <- function(){
 #' the manual ID JSON file.
 #'
 #' @param manual_ids IDs to clean. Defaults to the output of
-#' [players_fetch_manual_ids()]
+#' [players_manual_ids_fetch()]
 #'
 #' @details
 #' If the function detects IDs that can be removed, it will ask the user if the
@@ -71,7 +71,7 @@ players_fetch_manual_ids <- function(){
 #'
 #' @return Cleaned dataset invisibly
 #' @export
-players_clean_manual_ids <- function(manual_ids = players_fetch_manual_ids()){
+players_manual_ids_clean <- function(manual_ids = players_manual_ids_fetch()){
 
   pfr <- players_download("pfr") |>
     remove_duplicated("pfr_id")
@@ -142,7 +142,7 @@ players_clean_manual_ids <- function(manual_ids = players_fetch_manual_ids()){
     }
   } else if (!identical(manual_ids, cleaned)){
     cli::cli_alert_info("Detected entries that should be cleaned. \\
-                        Please run {.fun players_clean_manual_ids} interactively.")
+                        Please run {.fun players_manual_ids_clean} interactively.")
   }
 
   invisible(cleaned)

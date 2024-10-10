@@ -6,7 +6,7 @@
 \usage{
 players_manual_overwrite(
   players_df,
-  manual_ids = players_fetch_manual_ids(),
+  manual_ids = players_manual_ids_fetch(),
   ids_to_replace = overwrite_ids()
 )
 }
@@ -16,7 +16,7 @@ variables listed in \code{ids_to_replace}}
 
 \item{manual_ids}{A data.frame with the variables \code{gsis_id} and at least the
 variables listed in \code{ids_to_replace}. This defaults to the output of
-\code{\link[=players_fetch_manual_ids]{players_fetch_manual_ids()}}.}
+\code{\link[=players_manual_ids_fetch]{players_manual_ids_fetch()}}.}
 
 \item{ids_to_replace}{Variable names where replacement should be performed.
 Defaults to gsis_id, pfr_id, pff_id, otc_id, and espn_id}
