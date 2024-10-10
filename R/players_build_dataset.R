@@ -30,7 +30,6 @@ players_build_dataset <- function(release = FALSE){
     remove_duplicated("espn_id")
 
   otc <- players_download("otc") |>
-    dplyr::mutate(dplyr::across(c(otc_id, pff_id), as.integer)) |>
     dplyr::filter(!is.na(gsis_id)) |>
     # otc has some duplicates IDs. We have to remove them here
     remove_duplicated("gsis_id") |>
@@ -67,7 +66,8 @@ players_build_dataset <- function(release = FALSE){
     ) |>
     dplyr::relocate(pfr_id, pff_id, otc_id, espn_id, .after = esb_id) |>
     players_manual_overwrite() |>
-    dplyr::arrange(last_name, first_name, gsis_id)
+    dplyr::arrange(last_name, first_name, gsis_id) |>
+    .convert_ids()
 
   check <- players_validate(players_full)
 
