@@ -22,7 +22,7 @@ identify_duplicated <- function(df,
                                 verbose = TRUE){
   id <- rlang::arg_match(id)
   mults <- df |>
-    dplyr::filter(!is.na(.data[[id]])) |>
+    dplyr::filter(!is.na(.data[[id]]), .data[[id]] != "") |>
     dplyr::filter(dplyr::n() > 1, .by = {{ id }}) |>
     dplyr::arrange(.data[[id]])
   if (nrow(mults) > 0 && isTRUE(verbose)){
@@ -33,3 +33,13 @@ identify_duplicated <- function(df,
 }
 
 relevant_ids <- function() c("gsis_id", "pfr_id", "pff_id", "otc_id", "espn_id")
+
+.convert_ids <- function(df){
+  df |>
+    dplyr::mutate(
+      dplyr::across(
+        tidyselect::any_of(c("pff_id", "espn_id", "otc_id")),
+        as.character
+      )
+    )
+}
