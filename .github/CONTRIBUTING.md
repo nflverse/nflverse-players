@@ -70,7 +70,8 @@ As of Monday, October 7th, 2024, the first 3 entries of that file look like this
 
 Our code will go through all gsis_ids (that's our primary key) and overwrite the 
 associated other IDs - in this example the pfr_ids. The code won't care if the current 
-ID is missing or wrong. It will overwrite regardless!
+ID is missing or wrong. It will overwrite regardless! If you would like to remove
+an incorrect ID, you need to "overwrite" with an empty string `""`!
 
 We store this file as JSON because it makes it easy to identify and review changes, and 
 it nicely groups together related IDs for a specific player.
