@@ -30,7 +30,8 @@ players_espn_release <- function(players_espn_full_rebuild = Sys.getenv("PLAYERS
 
   # LOAD ESPN ID SOURCE. THE DATASOURCE LIVES IN
   # THE ENVIRONMENT VARIABLE "ESPN_PLAYERS_BASE"
-  espn_basis <- .espn_basis_load()
+  espn_basis <- .espn_basis_load() |>
+    dplyr::mutate(espn_id = as.character(espn_id))
 
   # LOAD PLAYERS BASIS WHERE WE WANT TO JOIN ESPN IDs TO.
   if (isTRUE(espn_full_rebuild)){
