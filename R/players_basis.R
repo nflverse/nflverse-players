@@ -42,9 +42,12 @@ players_basis_release <- function(overwrite = !interactive()){
       jersey_number,
       rookie_season,
       last_season = season,
-      last_team = team_abbreviation,
+      latest_team = team_abbreviation,
       status,
       years_of_experience = nfl_experience
+    ) |>
+    dplyr::mutate(
+      latest_team = nflreadr::clean_team_abbrs(latest_team)
     ) |>
     dplyr::arrange(dplyr::desc(last_season), gsis_id)
 
