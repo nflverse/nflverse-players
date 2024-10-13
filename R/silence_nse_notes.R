@@ -26,6 +26,7 @@ utils::globalVariables(
     "join_name",
     "last_name",
     "last_season",
+    "latest_team",
     "name",
     "nfl_experience",
     "otc_id",
