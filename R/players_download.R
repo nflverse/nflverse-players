@@ -7,7 +7,7 @@
 #'
 #' @return A dataframe with players data
 #' @export
-players_download <- function(type = c("basis", "pfr", "otc", "pff", "espn", "draft", "full")){
+players_download <- function(type = c("basis", "pfr", "otc", "pff", "espn", "draft", "ngs", "full")){
   type <- rlang::arg_match(type)
   available_files <- c(
     "basis" = "players_basis.rds",
@@ -16,6 +16,7 @@ players_download <- function(type = c("basis", "pfr", "otc", "pff", "espn", "dra
     "pff" = "players_pff.rds",
     "espn" = "players_espn.rds",
     "draft" = "players_draft.rds",
+    "ngs" = "players_ngs.rds",
     "full" = "players_full.rds"
   )
   load_file <- available_files[type]
