@@ -5,7 +5,7 @@
 \title{Download Players Components}
 \usage{
 players_download(
-  type = c("basis", "pfr", "otc", "pff", "espn", "draft", "full")
+  type = c("basis", "pfr", "otc", "pff", "espn", "draft", "ngs", "full")
 )
 }
 \arguments{
