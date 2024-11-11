@@ -8,12 +8,10 @@ jobs:
   heartbeat:
     name: heartbeat
     runs-on: ubuntu-latest
-    env:
-      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     steps:
       - uses: actions/checkout@v4
         with:
-          ref: 'hearbeat'
+          ref: 'heartbeat'
       - name: Commit heartbeat
         run: |
           git config --local user.email "actions@github.com"
