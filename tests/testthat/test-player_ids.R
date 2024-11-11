@@ -22,6 +22,12 @@ test_that("espn data is not duplicated", {
   expect_false(is_duplicated(check))
 })
 
+test_that("ngs data is not duplicated", {
+  data <- players_download("ngs")
+  check <- players_validate(data)
+  expect_false(is_duplicated(check))
+})
+
 test_that("manual overwrite is not duplicated", {
   data <- players_manual_ids_fetch()
   check <- players_validate(data)

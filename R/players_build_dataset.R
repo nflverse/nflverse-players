@@ -44,6 +44,8 @@ players_build_dataset <- function(release = FALSE){
       draft_team = nflreadr::clean_team_abbrs(draft_team)
     )
 
+  ngs <- players_download("ngs")
+
   players_full <- basis |>
     dplyr::left_join(
       pfr,
@@ -64,7 +66,14 @@ players_build_dataset <- function(release = FALSE){
     dplyr::left_join(
       draft, by = "pfr_id"
     ) |>
-    dplyr::relocate(pfr_id, pff_id, otc_id, espn_id, .after = esb_id) |>
+    dplyr::left_join(
+      ngs, by = "gsis_id"
+    ) |>
+    dplyr::relocate(nfl_id, pfr_id, pff_id, otc_id, espn_id, .after = esb_id) |>
+    dplyr::relocate(short_name, football_name, suffix, .after = last_name) |>
+    dplyr::relocate(college_conference, .after = college_name) |>
+    dplyr::relocate(ngs_status, ngs_status_short_description, .after = status) |>
+    dplyr::relocate(ngs_position_group, ngs_position, .after = position) |>
     players_manual_overwrite() |>
     dplyr::arrange(last_name, first_name, gsis_id) |>
     .convert_ids()
