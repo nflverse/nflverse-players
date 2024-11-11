@@ -20,4 +20,6 @@ if (type == "roster"){
   # process it
   Sys.sleep(45)
   combined <- nflverse.players::.espn_combine_raw_players()
+} else if (type == "raw_ngs" && nflverse.players:::.ngs_is_valid_season(season)){
+  out <- nflverse.players::.ngs_release_raw_players(seasons = season)
 }

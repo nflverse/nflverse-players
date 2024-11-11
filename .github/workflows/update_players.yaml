@@ -57,7 +57,7 @@ jobs:
       fail-fast: false
       matrix:
         season: ${{ fromJson(needs.update_setup.outputs.seasons) }}
-        type: ["roster", "raw_draft", "raw_pff", "raw_espn"]
+        type: ["roster", "raw_draft", "raw_pff", "raw_espn", "raw_ngs"]
     env:
       GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       GITHUB_PAT: ${{ secrets.NFLVERSE_GH_TOKEN }}
@@ -83,7 +83,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        type: ["basis", "pfr", "otc", "pff", "draft", "espn"]
+        type: ["basis", "pfr", "otc", "pff", "draft", "espn", "ngs"]
     env:
       GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       GITHUB_PAT: ${{ secrets.NFLVERSE_GH_TOKEN }}
