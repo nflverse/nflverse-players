@@ -1,7 +1,7 @@
 season <- Sys.getenv("NFLVERSE_UPDATE_SEASON", unset = NA_character_) |> as.integer()
 
 type <- Sys.getenv("NFLVERSE_UPDATE_TYPE", unset = NA_character_)
-type <- rlang::arg_match0(type, c("roster", "raw_draft", "raw_pff", "raw_espn"))
+type <- rlang::arg_match0(type, c("roster", "raw_draft", "raw_pff", "raw_espn", "raw_ngs"))
 
 if (type == "roster"){
   out <- nflverse.players::.basis_release_raw_roster(seasons = season)
