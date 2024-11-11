@@ -15,4 +15,6 @@ if (type == "basis"){
   out <- nflverse.players::players_pff_release()
 } else if (type == "espn"){
   out <- nflverse.players::players_espn_release()
+} else if (type == "ngs"){
+  out <- nflverse.players::players_ngs_release()
 }
