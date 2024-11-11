@@ -34,7 +34,7 @@ players_ngs_release <- function(overwrite = !interactive()){
       ngs_status_short_description = status_short_description,
       college_conference
     ) |>
-    dplyr::arrange(dplyr::desc(season), gsis_id)
+    dplyr::arrange(gsis_id)
 
   data.table::setDF(ngs_players)
 
