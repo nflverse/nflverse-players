@@ -8,6 +8,8 @@ jobs:
   heartbeat:
     name: heartbeat
     runs-on: ubuntu-latest
+    env:
+      GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
     steps:
       - uses: actions/checkout@v4
         with:
