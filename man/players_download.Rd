@@ -5,11 +5,11 @@
 \title{Download Players Components}
 \usage{
 players_download(
-  type = c("basis", "pfr", "otc", "pff", "espn", "draft", "ngs", "full")
+  type = c("full", "basis", "pfr", "otc", "pff", "espn", "draft", "ngs")
 )
 }
 \arguments{
-\item{type}{One of \code{"basis"}, \code{"pfr"}, \code{"pff"}, \code{"otc"}, \code{"espn"}, \code{"draft"}, \code{"full"}}
+\item{type}{One of \code{"full"}, \code{"basis"}, \code{"pfr"}, \code{"pff"}, \code{"otc"}, \code{"espn"}, \code{"draft"}, \code{"ngs"}}
 }
 \value{
 A dataframe with players data
