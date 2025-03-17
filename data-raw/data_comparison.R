@@ -29,17 +29,17 @@ tibble::tribble(
   "weight", "weight", NA_character_,
   "years_of_experience", "years_of_experience", NA_character_,
   "team_abbr", "latest_team", "renamed as team_abbr doesn't make sense for retired players",
-  "team_seq", NA_character_, "Useless variable",
-  "current_team_id", NA_character_, "That ID is only used in ngs and nfl apis",
+  "team_seq", NA_character_, "needless variable",
+  "current_team_id", NA_character_, "needless; only used in ngs and nfl apis",
   "football_name", "football_name", NA_character_,
-  "entry_year", NA_character_, "No source and mostly same as rookie_year",
+  "entry_year", NA_character_, "no source and mostly same as rookie_year",
   "rookie_year", "rookie_season", "renamed for consistency",
   "draft_club", "draft_team", "renamed for consistency",
   "draft_number", "draft_pick", "idk why this was called number",
   "college_conference", "college_conference", NA_character_,
-  "status_description_abbr", NA_character_, "Seems to be useless. We have ngs_status and ngs_status_short_description",
+  "status_description_abbr", NA_character_, "needless; we have ngs_status and ngs_status_short_description",
   "status_short_description", "ngs_status_short_description", NA_character_,
-  "gsis_it_id", "nfl_id", "It is named nfl_id in Big Data Bowl",
+  "gsis_it_id", "nfl_id", "renamed as it is named nfl_id in Big Data Bowl",
   "short_name", "short_name", NA_character_,
   "smart_id", "smart_id", NA_character_,
   "headshot", "headshot", NA_character_,
@@ -74,8 +74,8 @@ tibble::tribble(
     na_color = "blue"
   ) |>
   gt::tab_header(
-    "Comparing the old and new players data",
-    gt::html("RED = Variable removed<br>ORANGE = Variable renamed<br>BLUE = New variables")
+    "Comparing Players Data V1 and V2",
+    gt::html("RED = Variable removed<br>ORANGE = Variable renamed<br>BLUE = New variable")
   )
 
 new_names <- names(new_p)
