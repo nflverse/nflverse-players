@@ -12,7 +12,7 @@ pillar::glimpse(new_p)
 paste0('"', names(old_p), '",') |>
   cli::cli_code()
 
-tibble::tribble(
+tbl <- tibble::tribble(
   ~old_var, ~new_var, ~details,
   "status", "status", NA_character_,
   "display_name", "display_name", NA_character_,
@@ -38,7 +38,7 @@ tibble::tribble(
   "draft_number", "draft_pick", "idk why this was called number",
   "college_conference", "college_conference", NA_character_,
   "status_description_abbr", NA_character_, "needless; we have ngs_status and ngs_status_short_description",
-  "status_short_description", "ngs_status_short_description", NA_character_,
+  "status_short_description", "ngs_status_short_description", "renamed for consistency",
   "gsis_it_id", "nfl_id", "renamed as it is named nfl_id in Big Data Bowl",
   "short_name", "short_name", NA_character_,
   "smart_id", "smart_id", NA_character_,
@@ -77,6 +77,8 @@ tibble::tribble(
     "Comparing Players Data V1 and V2",
     gt::html("RED = Variable removed<br>ORANGE = Variable renamed<br>BLUE = New variable")
   )
+
+gt::gtsave(tbl, "man/figures/data_comparison.png", zoom = 3)
 
 new_names <- names(new_p)
 old_names <- names(old_p)
