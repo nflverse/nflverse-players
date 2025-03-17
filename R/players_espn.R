@@ -183,8 +183,9 @@ players_espn_release <- function(players_espn_full_rebuild = Sys.getenv("PLAYERS
 
     failed <- status[status$status_code != 200,]
 
-    if (nrow(failed > 0)){
+    if (nrow(failed) > 0){
       cli::cli_alert_warning("Failed to download the following {cli::qty(nrow(failed))}file{?s}: {.url {failed$url}}")
+      deleted_failed <- file.remove(failed$destfile)
     }
 
     succeeded <- status$destfile[status$status_code == 200]
