@@ -52,10 +52,10 @@ for further information.
 
 Players data from this repo can be considered as version 2. They were officially 
 introduced to nflverse in the offseason after the 2024 season and replace the 
-data previously provided via `nflreadr::load_players()`. This is a breaking 
-change because some variables have been removed or renamed. The table below 
+data previously provided via `nflreadr::load_players()`. This is a **breaking 
+change** because some variables have been removed or renamed. The table below 
 compares all variables from v1 and v2 and shows which have been removed, which 
-have been renamed and what they are now called, including a reason.
+have been renamed and what they are now named, including a reason.
 
 <div align="center">
 <img src="man/figures/data_comparison.png" width="800px">
