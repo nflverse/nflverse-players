@@ -19,6 +19,14 @@ players_basis_release <- function(overwrite = !interactive()){
     purrr::list_rbind()
 
   basis <- roster |>
+    dplyr::mutate(
+      # many rookies are missing gsis_ids during the offseason but most of them
+      # already got assigned esb_ids. We overwrite missing gsis_ids here to avoid
+      # dropping rookies. As soon as they are assigned gsis_ids they will be used.
+      # This isn't a perfect solution but the complete process is built on top of
+      # gsis IDs, so it's the easiest way to handle missing gsis_ids esp. during offseason
+      player_gsis_id = dplyr::if_else(is.na(player_gsis_id), player_esb_id, player_gsis_id)
+    ) |>
     dplyr::filter(!is.na(player_gsis_id)) |>
     dplyr::mutate(rookie_season = dplyr::first(season), .by = player_gsis_id) |>
     dplyr::slice_max(tibble::tibble(season, dplyr::desc(player_status)), n = 1, by = player_gsis_id) |>
