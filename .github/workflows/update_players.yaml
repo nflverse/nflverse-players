@@ -42,7 +42,7 @@ jobs:
             seasons=$( Rscript -e 'nflverse.workflows::get_season_range(1999)' )
           elif [ $SEASON_REBUILD == 9999 ]
           then
-            seasons=$( Rscript -e 'nflverse.workflows::get_current_season()' )
+            seasons=$( Rscript -e 'nflverse.workflows::get_current_season(roster = TRUE)' )
           else
             seasons="[$SEASON_REBUILD]"
           fi
