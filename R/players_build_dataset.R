@@ -99,7 +99,7 @@ players_build_dataset <- function(release = FALSE){
       players_full,
       file_name = "players",
       nflverse_type = "nflverse Players Data",
-      release_tag = "players_components",
+      release_tag = "players",
       file_types = c("rds", "csv", "parquet", "qs", "csv.gz"),
       repo = "nflverse/nflverse-data"
     )
