@@ -28,9 +28,9 @@ players_espn_release <- function(players_espn_full_rebuild = Sys.getenv("PLAYERS
   # WHERE WE ALREADY HAVE ESPN IDs FROM A FORMER JOIN
   espn_full_rebuild <- as.logical(players_espn_full_rebuild)
 
-  # LOAD ESPN ID SOURCE. THE DATASOURCE LIVES IN
-  # THE ENVIRONMENT VARIABLE "ESPN_PLAYERS_BASE"
+  # LOAD ESPN ID SOURCE. WE CLEAN IDS AS THE ID SYSTEM AT ESPN CHANGED AROUND 2007
   espn_basis <- .espn_basis_load() |>
+    .espn_clean_basis() |>
     dplyr::mutate(espn_id = as.character(espn_id))
 
   # LOAD PLAYERS BASIS WHERE WE WANT TO JOIN ESPN IDs TO.
@@ -38,7 +38,7 @@ players_espn_release <- function(players_espn_full_rebuild = Sys.getenv("PLAYERS
     # THE PLAYERS BASIS HAS NO ESPN ID VARIABLE. WE DEFINE IT AND THEN TRY MUTIPLE
     # JOINS TO FILL AS MANY IDs AS POSSIBLE
     players_basis <- players_download("basis") |>
-      dplyr::mutate(espn_id = NA_integer_)
+      dplyr::mutate(espn_id = NA_character_)
   } else if (isFALSE(espn_full_rebuild)){
     # IF WE DON'T DO A FULL ESPN REBUILD, WE LOAD THE FULL PLAYERS DATASET
     # AND TRY TO FILL NA ESPN IDs ONLY
@@ -47,14 +47,21 @@ players_espn_release <- function(players_espn_full_rebuild = Sys.getenv("PLAYERS
 
   # NOW FILL IDs WITH MULTIPLE JOINS
   players_espn <- players_basis |>
-    .espn_join(espn_basis, by = "full_name_position") |>
+    .espn_join(espn_basis, by = "full_name_dob") |>
+    .espn_join(espn_basis, by = "last_name_dob") |>
+    .espn_join(espn_basis, by = "full_name_jersey") |>
+    .espn_join(espn_basis, by = "full_name_weight") |>
+    .espn_join(espn_basis, by = "first_name_dob") |>
     .espn_join(espn_basis, by = "full_name") |>
     remove_duplicated("espn_id") |>
     strip_nflverse_attributes() |>
     tibble::as_tibble()
 
   # ONLY FOR DEV WORK
-  missing <- players_basis |> dplyr::filter(!gsis_id %in% players_espn$gsis_id)
+  # THESE ARE THE ROWS IN espn_basis WHERE NO MATCH WITH players_basis WAS POSSIBLE
+  # AT THE TIME OF DEVELOPMENT 3085 espn_ids WERE UNRESOLVED, 26 OF THEM LISTED
+  # AS "ACTIVE", ROUGHLY 0.8%
+  unresolved <- espn_basis |> dplyr::filter(!espn_id %in% players_espn$espn_id)
 
   # THE MAPPING REALLY ONLY LISTS GSIS ID AND ESPN ID
   espn_mapping <- players_espn |>
@@ -75,182 +82,84 @@ players_espn_release <- function(players_espn_full_rebuild = Sys.getenv("PLAYERS
 
 # Raw ESPN Players Data (no joins) ----------------------------------------
 
-#' Combine Raw ESPN Player Files
+#' Release ESPN Players File
 #'
-#' This function downloads raw ESPN player files from the release tag `raw_espn`
-#' in the nflverse-players repo, and summarizes the data (uses the latest season
-#' of each player) to the raw players ESPN dataset. Raw players data are saved
-#' locally. Set argument `overwrite` to `TRUE` to always download the latest data.
-#' The function finishes by releasing the raw players ESPN data to the release tag
-#' `raw_espn` of the nflverse-players repo.
-#'
-#' @param overwrite If `TRUE` overwrites all existing raw ESPN files in the
-#' directory `./build/raw_espn`.
-#'
-#' @return Returns the combined raw players ESPN dataset invisibly
+#' This function releases raw ESPN players data to a release in the nflverse-players
+#' repo. It fetches one table with all available athletes from the ESPN API,
+#' compares the returned data with the currently saved data, updates exosting
+#' rows and inserts new rows as needed.
 #'
 #' @export
-.espn_combine_raw_players <- function(overwrite = !interactive()){
-  raw_players_files <- .espn_download_raw_players(overwrite = overwrite)
-  raw_players <- purrr::map(raw_players_files, readRDS) |>
-    purrr::list_rbind()
-
-  espn_players <- raw_players |>
-    dplyr::filter(espn_id >= 0) |>
-    dplyr::filter(!is.na(espn_id)) |>
-    dplyr::slice_max(season, n = 1, by = espn_id) |>
-    dplyr::rename(last_season = season) |>
-    dplyr::arrange(dplyr::desc(last_season), espn_id)
-
-  nflversedata::nflverse_save(
-    espn_players,
-    file_name = "espn_players_combined",
-    nflverse_type = "Raw Players ESPN Data",
-    release_tag = "raw_espn",
-    file_types = "rds",
-    repo = "nflverse/nflverse-players"
-  )
-
-  invisible(espn_players)
-}
-
-#' Release ESPN Players Files
-#'
-#' This function releases raw ESPN players files to a release in the nflverse-players
-#' repo. This function is intended to update the most recent season in order
-#' to get up to date ESPN player information.
-#'
-#' @param seasons The seasons for which to release ESPN players files
-#'
-#' @export
-.espn_release_raw_players <- function(seasons){
-  # CREATE TEMPORARY DIRECTORY FOR ESPN ROSTER
-  file_dir <- file.path("build", "raw_espn")
-  if (!dir.exists(file_dir)) dir.create(file_dir)
-
-  file_paths <- purrr::map_chr(
-    seasons,
-    .espn_save_raw_players,
-    file_dir = file_dir,
-    .progress = TRUE
-  )
-
-  file_paths <- stats::na.omit(file_paths)
-
-  nflversedata::nflverse_upload(
-    file_paths,
-    tag = "raw_espn",
-    repo = "nflverse/nflverse-players"
-  )
-
-  invisible(TRUE)
-}
-
-.espn_download_raw_players <- function(overwrite = !interactive()) {
-  # IT SEEMS LIKE ESPN CHANGED PLAYER IDs in 2007
-  # THIS CAUSES DUPLICATED PLAYERS BECAUSE THEY HAVE 2 IDs
-  # FILTERING TO 2007+ FINDS MORE MATCHES TOTAL
-  to_load <- file.path(
-    "https://github.com/nflverse/nflverse-players/releases/download/raw_espn",
-    paste0(
-      "espn_players_",
-      seq(2007, nflreadr::most_recent_season(roster = TRUE)),
-      ".rds"
-    ),
-    fsep = "/"
-  )
-
-  save_dir <- file.path(getwd(), "build", "raw_espn")
-  if (!dir.exists(save_dir)) dir.create(save_dir)
-  save_to <- file.path(save_dir, basename(to_load))
-
-  succeeded <- character()
-  exists_locally <- character()
-
-  if (isFALSE(overwrite)){
-    exists <- file.exists(save_to)
-    initial_to_load <- to_load
-    initial_save_to <- save_to
-    to_load <- to_load[!exists]
-    save_to <- save_to[!exists]
-    cli::cli_alert_info("Going to skip {.url {basename(initial_to_load[exists])}} because the \\
-                        files exist locally and {.arg overwrite} is set to {.val FALSE}")
-    exists_locally <- initial_save_to[exists]
-  }
-
-  if (length(to_load)){
-    status <- curl::multi_download(to_load, save_to)
-
-    failed <- status[status$status_code != 200,]
-
-    if (nrow(failed) > 0){
-      cli::cli_alert_warning("Failed to download the following {cli::qty(nrow(failed))}file{?s}: {.url {failed$url}}")
-      deleted_failed <- file.remove(failed$destfile)
-    }
-
-    succeeded <- status$destfile[status$status_code == 200]
-
-  }
-  raw_files <- c(exists_locally, succeeded)
-
-  if (length(raw_files) == 0){
-    cli::cli_abort("No successful downloads and no local copies available. \\
-                   It doesn't make sense to continue at this point.")
-  }
-
-  raw_files
-}
-
-.espn_save_raw_players <- function(season, file_dir){
+.espn_release_raw_players <- function(){
+  cli::cli_progress_step("Query ESPN players data")
   resp <- tryCatch(
-    httr2::request("https://lm-api-reads.fantasy.espn.com") |>
-      httr2::req_url_path_append(
-        "apis", "v3", "games", "ffl", "seasons", season, "players"
-      ) |>
-      httr2::req_url_query(view = "players_wl") |>
-      httr2::req_headers("x-fantasy-filter" = '{"filterActive":{"value":true}}') |>
-      httr2::req_perform() |>
-      httr2::resp_body_json(simplifyVector = TRUE) |>
-      janitor::clean_names(),
+    nflverse.espn::espn_athletes(),
     httr2_http_404 = function(cnd) data.frame()
   )
 
   # API RETURNS EMPTY DATA INSTEAD OF A FAILURE. SO WE HAVE TO QUIT HERE IF THE
   # DATAFRAME IS EMPTY
   if (nrow(resp) == 0) {
-    cli::cli_alert_warning(
-      "Couldn't find {.val {season}} espn players data. Exiting."
-    )
-    return(invisible(NA_character_))
+    cli::cli_alert_warning("Couldn't find espn players data. Exiting.")
+    return(invisible(FALSE))
   }
 
-  players_espn <- resp |>
+  # THIS IS ONE BIG TABLE LISTING ABOUT 20K PLAYERS AT THE TIME OF WRITING THE
+  # CODE (AUGUST 2025).
+  new_players_espn <- resp |>
+    # WE REALLY DON'T NEED THOSE IDS
+    dplyr::mutate(uid = NULL, guid = NULL) |>
+    # THE RESPONSE INCLUDES SOME NON PLAYER ROWS WE DON'T NEED
+    dplyr::filter(!grepl("\\[|\\]|Team", display_name, perl = TRUE)) |>
+    # WE WANT TO JOIN BY DATE OF BIRTH AND MAKE SURE WE HAVE IT AS A DATE OBJECT
     dplyr::mutate(
-      season = .env$season,
+      dob = as.Date(date_of_birth)
     ) |>
-    dplyr::select(
-      season,
-      espn_id = id,
-      espn_position = default_position_id,
-      first_name,
-      last_name,
-      full_name,
-      team = pro_team_id
-    ) |>
-    dplyr::mutate(
-      team = unname(.espn_team_ids[as.character(team)]),
-      espn_position = unname(.espn_position_ids[as.character(espn_position)])
-    )
+    as.data.frame()
 
-  # THE FILENAME SHOULD INCLUDE THE SEASON
-  # WHEN SEASON == NULL, THE API WILL RETURN CURRENT SEASON
-  # SO WE HAVE TO REPLACE NULL VALUES WITH THE CURRENT SEASON FOR THE FILENAME
-  file_name <- paste0("espn_players_", season, ".rds")
-  file_path <- file.path(file_dir, file_name)
-  saveRDS(players_espn, file_path)
+  cli::cli_progress_step("Download latest data and compare with new data")
 
-  # WE RETURN FILEPATH HERE BECAUSE THERE WILL BE A LOOP OVER SEASONS
-  return(file_path)
+  # WE DO NOT WANT TO LOSE OLDER DATA IF ESPN AT SOME POINT DECIDES TO
+  # RETURN LESS DATA OR MESS WITH US. THAT'S WHY WE DOWNLOAD THE CURRENT RELEASE
+  # AND UPDATE EXISTING ROWS, OR INSERT NEW ROWS. THIS MAKES SURE WE DON'T LOSE
+  # OLDER DATA THAT IS NOT RETURNED BY THE API ANYMORE
+  current_players_espn <- .espn_basis_load() |>
+    strip_nflverse_attributes() |>
+    data.table::setDF()
+
+  if (nrow(current_players_espn) == 0) {
+    cli::cli_progress_done()
+    cli::cli_alert_warning("Couldn't download current espn players data. Exiting.")
+    return(invisible(FALSE))
+  }
+
+  if (identical(current_players_espn, new_players_espn)){
+    cli::cli_progress_done()
+    cli::cli_alert_info("No new data. Exit without upload.")
+    return(invisible(FALSE))
+  }
+
+  # UPSERT
+  # UPDATES EXISTING ROWS IN `current_players_espn` AND
+  # INSERTS NEW ROWS IN `new_players_espn` THAT DON'T EXIST IN `current_players_espn`
+  to_release <- dplyr::rows_upsert(
+    current_players_espn, new_players_espn, by = "espn_id"
+  )
+
+  # NOTE:
+  # THIS IS RAW DATA. ESPN CHANGED THEIR ID SYSTEM AROUND 2007 WHICH MEANS THERE
+  # ARE PLAYERS LISTED WITH TWO DIFFERENT IDS. WE TAKE CARE ABOUT THESE CASES IN
+  # `.espn_clean_basis` TO BE ABLE TO LEAVE RAW DATA AS IS.
+  nflversedata::nflverse_save(
+    to_release,
+    file_name = "espn_players_basis",
+    nflverse_type = "Raw Players ESPN Data",
+    release_tag = "raw_espn",
+    file_types = "rds",
+    repo = "nflverse/nflverse-players"
+  )
+
+  invisible(TRUE)
 }
 
 
@@ -258,23 +167,35 @@ players_espn_release <- function(players_espn_full_rebuild = Sys.getenv("PLAYERS
 
 .espn_basis_load <- function(){
   nflreadr::rds_from_url(
-    "https://github.com/nflverse/nflverse-players/releases/download/raw_espn/espn_players_combined.rds"
+    "https://github.com/nflverse/nflverse-players/releases/download/raw_espn/espn_players_basis.rds"
   )
 }
 
 .espn_join <- function(players_basis,
                        espn_basis,
-                       by = c("full_name_position", "full_name"),
+                       by = c("full_name_dob", "last_name_dob", "full_name_jersey","first_name_dob", "full_name_weight", "full_name"),
                        verbose = getOption("players_espn_join.verbose", TRUE)){
 
   by <- rlang::arg_match(by)
 
   players_basis$join_name <- nflreadr::clean_player_names(
-    players_basis$display_name,
+    if (by %in% c("last_name_dob")) {
+      players_basis$last_name
+    } else if (by %in% c("first_name_dob")) {
+      players_basis$first_name
+    } else {
+      players_basis$display_name
+    },
     lowercase = TRUE
   )
   espn_basis$join_name <- nflreadr::clean_player_names(
-    espn_basis$full_name,
+    if (by %in% c("last_name_dob")) {
+      espn_basis$last_name
+    } else if (by %in% c("first_name_dob")) {
+      espn_basis$first_name
+    } else {
+      espn_basis$full_name
+    },
     lowercase = TRUE
   )
 
@@ -285,21 +206,67 @@ players_espn_release <- function(players_espn_full_rebuild = Sys.getenv("PLAYERS
   espn_basis <- espn_basis |>
     dplyr::filter(!espn_id %in% players_basis$espn_id)
 
-  if (by == "full_name_position"){
+  if (by %in% c("full_name_dob", "last_name_dob", "first_name_dob")){
     joined <- players_basis |>
-      dplyr::filter(!is.na(position), !is.na(gsis_id), is.na(espn_id)) |>
-      dplyr::select(join_name, position, gsis_id) |>
+      dplyr::filter(!is.na(birth_date), !is.na(gsis_id), is.na(espn_id)) |>
+      dplyr::select(join_name, birth_date, gsis_id) |>
+      dplyr::mutate(birth_date = as.Date(birth_date)) |>
       dplyr::left_join(
-        espn_basis |> dplyr::select(espn_id, join_name, position = espn_position),
-        by = c("join_name", "position"),
+        espn_basis |> dplyr::select(espn_id, join_name, birth_date = dob),
+        by = c("join_name", "birth_date"),
+      ) |>
+      remove_duplicated("gsis_id") |>
+      dplyr::filter(!is.na(espn_id))
+
+    if (isTRUE(verbose)){
+      by_name <- if (by %in% c("last_name_dob", "last_name_jersey")) {
+        "last name"
+      } else if (by == "first_name_dob") {
+        "first name"
+      } else {
+        "full name"
+      }
+      cli::cli_alert_info(
+        "The join by {by_name} and date of birth resolved \\
+        {cli::no(nrow(joined))}/{cli::no(nrow(espn_basis))} \\
+        ESPN player ID{?s}."
+      )
+    }
+  } else if (by %in% c("full_name_weight")){
+    joined <- players_basis |>
+      dplyr::filter(!is.na(weight), !is.na(gsis_id), is.na(espn_id)) |>
+      dplyr::select(join_name, weight, gsis_id) |>
+      # dplyr::mutate(weight = as.character(weight)) |>
+      dplyr::left_join(
+        espn_basis |> dplyr::select(espn_id, join_name, weight),
+        by = c("join_name", "weight"),
       ) |>
       remove_duplicated("gsis_id") |>
       dplyr::filter(!is.na(espn_id))
 
     if (isTRUE(verbose)){
       cli::cli_alert_info(
-        "The join by name and position resolved \\
-        {cli::no(nrow(joined))}/{cli::no(nrow(players_basis))} \\
+        "The join by full name and weight resolved \\
+        {cli::no(nrow(joined))}/{cli::no(nrow(espn_basis))} \\
+        ESPN player ID{?s}."
+      )
+    }
+  } else if (by %in% c("full_name_jersey")){
+    joined <- players_basis |>
+      dplyr::filter(!is.na(jersey_number), !is.na(gsis_id), is.na(espn_id)) |>
+      dplyr::select(join_name, jersey_number, gsis_id) |>
+      # dplyr::mutate(weight = as.character(weight)) |>
+      dplyr::left_join(
+        espn_basis |> dplyr::select(espn_id, join_name, jersey_number = jersey),
+        by = c("join_name", "jersey_number"),
+      ) |>
+      remove_duplicated("gsis_id") |>
+      dplyr::filter(!is.na(espn_id))
+
+    if (isTRUE(verbose)){
+      cli::cli_alert_info(
+        "The join by full name and jersey number resolved \\
+        {cli::no(nrow(joined))}/{cli::no(nrow(espn_basis))} \\
         ESPN player ID{?s}."
       )
     }
@@ -316,8 +283,8 @@ players_espn_release <- function(players_espn_full_rebuild = Sys.getenv("PLAYERS
 
     if (isTRUE(verbose)){
       cli::cli_alert_info(
-        "The join by name resolved \\
-        {cli::no(nrow(joined))}/{cli::no(nrow(players_basis[is.na(players_basis$espn_id),]))} \\
+        "The join by full name resolved \\
+        {cli::no(nrow(joined))}/{cli::no(nrow(espn_basis))} \\
         ESPN player ID{?s}."
       )
     }
@@ -399,3 +366,21 @@ players_espn_release <- function(players_espn_full_rebuild = Sys.getenv("PLAYERS
   16,  "DST"
 ) |>
   tibble::deframe()
+
+# ESPN CHANGED THEIR ID SYSTEM AROUND 2007 WHICH MEANS THERE
+# ARE PLAYERS LISTED WITH TWO DIFFERENT IDS.
+# WE ASSUME THAT THE HIGHER ID IS THE CORRECT ID AS IT SEEMS LIKE
+# THEY SWITCHED FROM AROUND 4 DIGITS TO 7
+# THE ONLY WAY TO FIND THE DUPLICATED PLAYERS IS GROUPING BY FULL NAME AND
+# DATE OF BIRTH
+.espn_clean_basis <- function(espn_basis){
+  espn_basis |>
+    dplyr::mutate(
+      clean_name = tolower(full_name)
+    ) |>
+    dplyr::slice_max(
+      order_by = as.integer(espn_id),
+      by = c("clean_name", "dob")
+    ) |>
+    dplyr::mutate(clean_name = NULL)
+}

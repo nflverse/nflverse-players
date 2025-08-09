@@ -2,7 +2,6 @@
 
 export(.basis_release_raw_roster)
 export(.draft_release_season)
-export(.espn_combine_raw_players)
 export(.espn_release_raw_players)
 export(.ngs_release_raw_players)
 export(.pff_release_raw_players)
