@@ -14,12 +14,8 @@ if (type == "roster"){
   }
 } else if (type == "raw_pff" && nflverse.players:::.pff_is_valid_season(season)){
   out <- nflverse.players::.pff_release_raw_players(seasons = season)
-} else if (type == "raw_espn" && nflverse.players:::.espn_is_valid_season(season)){
-  out <- nflverse.players::.espn_release_raw_players(seasons = season)
-  # The next step downloads above data. Let's give the server some time to
-  # process it
-  Sys.sleep(45)
-  combined <- nflverse.players::.espn_combine_raw_players()
+} else if (type == "raw_espn"){
+  out <- nflverse.players::.espn_release_raw_players()
 } else if (type == "raw_ngs" && nflverse.players:::.ngs_is_valid_season(season)){
   out <- nflverse.players::.ngs_release_raw_players(seasons = season)
 }
