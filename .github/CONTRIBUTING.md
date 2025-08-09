@@ -82,7 +82,7 @@ it nicely groups together related IDs for a specific player.
 of this directly from the browser on the GitHub website*
 
 - Fork the package and clone onto your computer. If you haven't done this before, 
-we recommend using `usethis::create_from_github("nflverse/nflverse.players", fork = TRUE)`.
+we recommend using `usethis::create_from_github("nflverse/nflverse-players", fork = TRUE)`.
 
 - Create a Git branch for your pull request (PR). 
 We recommend using `usethis::pr_init("brief-description-of-change")`.
@@ -119,7 +119,7 @@ There is no way to automatically verify the IDs you have changed or added.
 So we need your help! Please help us verify the new ID as best you can by
 
 - giving us a brief explanation of which player you are referring to,
-- providing links to the related pfr, pff, or otc player websites.
+- providing links to the related pfr, pff, espn, or otc player websites.
 
 ## Code of Conduct
 
