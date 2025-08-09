@@ -10,8 +10,6 @@ Description: Maintain nflverse Players Data.
 License: MIT + file LICENSE
 URL: https://github.com/nflverse/nflverse.players
 BugReports: https://github.com/nflverse/nflverse.players/issues
-Depends: 
-    R (>= 4.2.0)
 Imports: 
     cli,
     curl,
