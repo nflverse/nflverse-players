@@ -1,6 +1,6 @@
 Package: nflverse.players
 Title: Create 'nflverse' Players Data
-Version: 0.0.2
+Version: 0.0.3
 Authors@R: c(
     person("Sebastian", "Carl", , "mrcaseb@gmail.com", role = c("aut", "cre")),
     person("Tan", "Ho", , "tan@tanho.ca", role = "aut",
