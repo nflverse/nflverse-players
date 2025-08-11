@@ -58,18 +58,21 @@ fix_headshot_url <- function(data) {
   data
 }
 
-upload_no_overwrites <- function(data) {
+upload_no_overwrites <- function(data, release = FALSE) {
   if (!is.null(attr(data, "manual_overwrite"))) {
     cli::cli_abort("Won't upload files with applied overwrites!")
   }
-  nflversedata::nflverse_save(
-    data,
-    file_name = "players_full_no_overwrites",
-    nflverse_type = "nflverse Players Data",
-    release_tag = "players_components",
-    file_types = "rds",
-    repo = "nflverse/nflverse-players"
-  )
+
+  if (isTRUE(release)) {
+    nflversedata::nflverse_save(
+      data,
+      file_name = "players_full_no_overwrites",
+      nflverse_type = "nflverse Players Data",
+      release_tag = "players_components",
+      file_types = "rds",
+      repo = "nflverse/nflverse-players"
+    )
+  }
 
   data
 }

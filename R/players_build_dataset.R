@@ -74,7 +74,7 @@ players_build_dataset <- function(release = FALSE){
     dplyr::relocate(college_conference, .after = college_name) |>
     dplyr::relocate(ngs_status, ngs_status_short_description, .after = status) |>
     dplyr::relocate(ngs_position_group, ngs_position, .after = position) |>
-    upload_no_overwrites() |>
+    upload_no_overwrites(release = release) |>
     players_manual_overwrite() |>
     fix_headshot_url() |>
     dplyr::arrange(last_name, first_name, gsis_id) |>
