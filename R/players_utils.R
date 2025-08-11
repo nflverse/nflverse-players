@@ -43,3 +43,17 @@ relevant_ids <- function() c("gsis_id", "pfr_id", "pff_id", "otc_id", "espn_id")
       )
     )
 }
+
+fix_headshot_url <- function(data) {
+  if ("headshot" %in% names(data)) {
+    data <- data |>
+      dplyr::mutate(
+        headshot = gsub(
+          "\\{formatInstructions\\}",
+          "f_auto,q_auto",
+          headshot
+        )
+      )
+  }
+  data
+}

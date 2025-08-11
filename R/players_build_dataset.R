@@ -75,6 +75,7 @@ players_build_dataset <- function(release = FALSE){
     dplyr::relocate(ngs_status, ngs_status_short_description, .after = status) |>
     dplyr::relocate(ngs_position_group, ngs_position, .after = position) |>
     players_manual_overwrite() |>
+    fix_headshot_url() |>
     dplyr::arrange(last_name, first_name, gsis_id) |>
     .convert_ids()
 
