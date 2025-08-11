@@ -35,7 +35,7 @@ test_that("manual overwrite is not duplicated", {
 })
 
 test_that("manual overwrite does not create duplicates", {
-  data <- players_download("full") |>
+  data <- players_download("no_overwrites") |>
     players_manual_overwrite()
   check <- players_validate(data)
   expect_false(is_duplicated(check))
