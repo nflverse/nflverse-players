@@ -152,7 +152,7 @@ players_pfr_release <- function(players_pfr_full_rebuild = Sys.getenv("PLAYERS_P
     if (isTRUE(verbose)){
       cli::cli_alert_info(
         "The join by name and rookie season resolved \\
-        {cli::no(nrow(joined))}/{cli::no(nrow(players_basis))} \\
+        {cli::no(nrow(joined))}/{cli::no(nrow(pfr_basis))} \\
         PFR player ID{?s}."
       )
     }
@@ -170,7 +170,7 @@ players_pfr_release <- function(players_pfr_full_rebuild = Sys.getenv("PLAYERS_P
     if (isTRUE(verbose)){
       cli::cli_alert_info(
         "The join by name resolved \\
-        {cli::no(nrow(joined))}/{cli::no(nrow(players_basis[is.na(players_basis$pfr_id),]))} \\
+        {cli::no(nrow(joined))}/{cli::no(nrow(pfr_basis))} \\
         PFR player ID{?s}."
       )
     }
@@ -192,7 +192,7 @@ players_pfr_release <- function(players_pfr_full_rebuild = Sys.getenv("PLAYERS_P
     if (isTRUE(verbose)){
       cli::cli_alert_info(
         "The join by (first last) resolved \\
-        {cli::no(nrow(joined))}/{cli::no(nrow(players_basis[is.na(players_basis$pfr_id),]))} \\
+        {cli::no(nrow(joined))}/{cli::no(nrow(pfr_basis))} \\
         PFR player ID{?s}."
       )
     }
