@@ -42,7 +42,18 @@ players_espn_release <- function(players_espn_full_rebuild = Sys.getenv("PLAYERS
   } else if (isFALSE(espn_full_rebuild)){
     # IF WE DON'T DO A FULL ESPN REBUILD, WE LOAD THE FULL PLAYERS DATASET
     # AND TRY TO FILL NA ESPN IDs ONLY
-    players_basis <- players_download("full")
+    # WE HAVE TO USE THE FULL DATASET WHERE NO OVERWITRES HAVE BEEN PERFORMED
+    # OTHERWISE `players_manual_ids_clean()` WILL MARK OVERWRITES AS OBSOLETE!
+    players_basis <- players_download("no_overwrites")
+  }
+
+  # IF BASIS DATA CONTAINS MANUAL OVERWITRES, players_manual_ids_clean()`
+  # WILL MARK OVERWRITES AS OBSOLETE. THIS CAN'T HAPPEN AS WE WOULD LOSE USEFUL
+  # MANUAL OVERWRITE DATA. THE ABOVE BLOCK SHOULD CATCH THIS BUT WE DOULBE CHECK
+  # HERE TO AVOID THIS PROBLEM THROUGH POTENTIAL FUTURE CODE CHANGES.
+  if (!is.null(attr(players_basis, "manual_overwrite"))) {
+    cli::cli_abort("Your basis data contains manual overwrites. \\
+                   This messes up the complete logic. Please fix.")
   }
 
   # NOW FILL IDs WITH MULTIPLE JOINS
