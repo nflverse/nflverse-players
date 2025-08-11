@@ -24,6 +24,7 @@ players_manual_overwrite <- function(players_df,
     replacement <- manual_ids[[id_name]] |> rlang::set_names(manual_ids[["gsis_id"]])
     players_df[[id_name]] <- overwrite(original, replacement)
   }
+  attr(players_df, "manual_overwrite") <- TRUE
   players_df
 }
 
