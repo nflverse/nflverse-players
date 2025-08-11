@@ -64,6 +64,7 @@ upload_no_overwrites <- function(data, release = FALSE) {
   }
 
   if (isTRUE(release)) {
+    cli::cli_alert_info("Upload {.val players_full_no_overwrites.rds}")
     nflversedata::nflverse_save(
       data,
       file_name = "players_full_no_overwrites",
