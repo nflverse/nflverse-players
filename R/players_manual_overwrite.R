@@ -87,6 +87,9 @@ players_manual_ids_clean <- function(manual_ids = players_manual_ids_fetch()){
     remove_duplicated("gsis_id") |>
     remove_duplicated("pff_id")
 
+  ngs <- players_download("ngs") |>
+    remove_duplicated("nfl_id")
+
   cleaned <- manual_ids |>
     dplyr::left_join(
       pfr,
@@ -95,6 +98,11 @@ players_manual_ids_clean <- function(manual_ids = players_manual_ids_fetch()){
     ) |>
     dplyr::left_join(
       espn,
+      by = "gsis_id",
+      suffix = c("", "_auto")
+    ) |>
+    dplyr::left_join(
+      ngs,
       by = "gsis_id",
       suffix = c("", "_auto")
     ) |>
@@ -108,7 +116,8 @@ players_manual_ids_clean <- function(manual_ids = players_manual_ids_fetch()){
       tidyselect::starts_with("pfr_id"),
       tidyselect::starts_with("pff_id"),
       tidyselect::starts_with("otc_id"),
-      tidyselect::starts_with("espn_id")
+      tidyselect::starts_with("espn_id"),
+      tidyselect::starts_with("nfl_id")
     ) |>
     dplyr::mutate(
       # If the ID in the manual ID json file is the same as the ID created in
@@ -117,15 +126,16 @@ players_manual_ids_clean <- function(manual_ids = players_manual_ids_fetch()){
       pfr_id =  dplyr::na_if(pfr_id, pfr_id_auto),
       pff_id =  dplyr::na_if(pff_id, pff_id_auto),
       otc_id =  dplyr::na_if(otc_id, otc_id_auto),
-      espn_id = dplyr::na_if(espn_id, espn_id_auto)
+      espn_id = dplyr::na_if(espn_id, espn_id_auto),
+      nfl_id = dplyr::na_if(nfl_id, nfl_id_auto)
     ) |>
     dplyr::select(
-      gsis_id, espn_id, pfr_id, pff_id, otc_id
+      gsis_id, espn_id, nfl_id, pfr_id, pff_id, otc_id
     ) |>
     dplyr::filter(
       # If all external IDs are NA, there is no point in keeping the gsis ID
       # in the json file
-      !dplyr::if_all(c(espn_id, pfr_id, pff_id, otc_id), is.na)
+      !dplyr::if_all(c(espn_id, pfr_id, pff_id, otc_id, nfl_id), is.na)
     ) |>
     dplyr::arrange(dplyr::desc(gsis_id))
 
