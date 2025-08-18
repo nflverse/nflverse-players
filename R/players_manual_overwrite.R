@@ -20,6 +20,7 @@ players_manual_overwrite <- function(players_df,
                                      manual_ids = players_manual_ids_fetch(),
                                      ids_to_replace = overwrite_ids()){
   for (id_name in ids_to_replace) {
+    if (!id_name %in% names(players_df)) next
     original <- players_df[[id_name]] |> rlang::set_names(players_df[["gsis_id"]])
     replacement <- manual_ids[[id_name]] |> rlang::set_names(manual_ids[["gsis_id"]])
     players_df[[id_name]] <- overwrite(original, replacement)
@@ -168,4 +169,4 @@ overwrite <- function(original_vec, replacement_vec){
     .convert_ids()
 }
 
-overwrite_ids <- function() c("pff_id", "pfr_id", "otc_id", "espn_id")
+overwrite_ids <- function() c("pff_id", "pfr_id", "otc_id", "espn_id", "nfl_id")
