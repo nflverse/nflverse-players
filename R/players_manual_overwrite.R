@@ -141,7 +141,7 @@ players_manual_ids_clean <- function(manual_ids = players_manual_ids_fetch()){
 
   if (!identical(manual_ids, cleaned) && interactive()) {
     update <- utils::menu(
-      title = "It is possible to remove some IDs from the manual ID json file.\nDo you wish to overwrite the file?",
+      title = "It is possible to clean up (sort and/or remove some IDs) the manual ID json file.\nDo you wish to overwrite the file?",
       choices = c("Yes", "No")
     ) == 1
     if (isTRUE(update)) {
