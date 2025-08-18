@@ -130,7 +130,7 @@ players_manual_ids_clean <- function(manual_ids = players_manual_ids_fetch()){
       nfl_id = dplyr::na_if(nfl_id, nfl_id_auto)
     ) |>
     dplyr::select(
-      gsis_id, espn_id, nfl_id, pfr_id, pff_id, otc_id
+      gsis_id, espn_id, pfr_id, pff_id, otc_id, nfl_id
     ) |>
     dplyr::filter(
       # If all external IDs are NA, there is no point in keeping the gsis ID
