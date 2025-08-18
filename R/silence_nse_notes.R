@@ -37,6 +37,7 @@ utils::globalVariables(
     "name",
     "nfl_experience",
     "nfl_id",
+    "nfl_id_auto",
     "ngs_position",
     "ngs_position_group",
     "ngs_status",

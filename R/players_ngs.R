@@ -20,7 +20,7 @@ players_ngs_release <- function(overwrite = !interactive()){
     janitor::clean_names()
 
   ngs_players <- raw_players |>
-    dplyr::filter(!is.na(gsis_id)) |>
+    dplyr::filter(!is.na(gsis_id), !is.na(gsis_it_id)) |>
     dplyr::slice_max(season, n = 1, by = gsis_id, with_ties = FALSE) |>
     dplyr::select(
       gsis_id,
@@ -34,7 +34,8 @@ players_ngs_release <- function(overwrite = !interactive()){
       ngs_status_short_description = status_short_description,
       college_conference
     ) |>
-    dplyr::arrange(gsis_id)
+    dplyr::arrange(gsis_id) |>
+    remove_duplicated("nfl_id")
 
   data.table::setDF(ngs_players)
 

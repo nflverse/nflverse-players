@@ -32,13 +32,13 @@ identify_duplicated <- function(df,
   invisible(mults)
 }
 
-relevant_ids <- function() c("gsis_id", "pfr_id", "pff_id", "otc_id", "espn_id")
+relevant_ids <- function() c("gsis_id", "pfr_id", "pff_id", "otc_id", "espn_id", "nfl_id")
 
 .convert_ids <- function(df){
   df |>
     dplyr::mutate(
       dplyr::across(
-        tidyselect::any_of(c("pff_id", "espn_id", "otc_id")),
+        tidyselect::any_of(c("pff_id", "espn_id", "otc_id", "nfl_id")),
         as.character
       )
     )

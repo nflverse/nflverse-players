@@ -19,7 +19,7 @@ variables listed in \code{ids_to_replace}. This defaults to the output of
 \code{\link[=players_manual_ids_fetch]{players_manual_ids_fetch()}}.}
 
 \item{ids_to_replace}{Variable names where replacement should be performed.
-Defaults to gsis_id, pfr_id, pff_id, otc_id, and espn_id}
+Defaults to gsis_id, pfr_id, pff_id, otc_id, espn_id, and nfl_id}
 }
 \value{
 Returns \code{players_df} with new values from \code{manual_ids}
