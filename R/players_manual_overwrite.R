@@ -176,7 +176,10 @@ overwrite <- function(original_vec, replacement_vec){
 
 .players_read_json <- function(file) {
   jsonlite::read_json(file, simplifyVector = TRUE) |>
-    .convert_ids()
+    .convert_ids() |>
+    dplyr::select(
+      gsis_id, espn_id, pfr_id, pff_id, otc_id, nfl_id
+    )
 }
 
 overwrite_ids <- function() c("pff_id", "pfr_id", "otc_id", "espn_id", "nfl_id")
