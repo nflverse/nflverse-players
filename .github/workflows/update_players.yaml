@@ -93,6 +93,7 @@ jobs:
       PLAYERS_PFR_BASE: ${{ secrets.PLAYERS_PFR_BASE }}
       PLAYERS_OTC_PLAYERID_ENDPOINT: ${{ secrets.PLAYERS_OTC_PLAYERID_ENDPOINT }}
       PLAYERS_OTC_API_KEY: ${{ secrets.PLAYERS_OTC_API_KEY }}
+      SCRAPEOPS_API_KEY: ${{ secrets.PLAYERS_SCRAPEOPS_API_KEY }}
       NFLVERSE.UPLOAD.QUIET: false
     steps:
       - uses: actions/checkout@v4
