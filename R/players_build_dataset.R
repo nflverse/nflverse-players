@@ -77,6 +77,9 @@ players_build_dataset <- function(release = FALSE){
     upload_no_overwrites(release = release) |>
     players_manual_overwrite() |>
     fix_headshot_url() |>
+    # need to update draft data for players where pfr IDs are fixed
+    # through players_manual_overwrite
+    dplyr::rows_update(draft, by = "pfr_id", unmatched = "ignore") |>
     dplyr::arrange(last_name, first_name, gsis_id) |>
     .convert_ids()
 
