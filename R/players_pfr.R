@@ -97,7 +97,12 @@ players_pfr_release <- function(players_pfr_full_rebuild = Sys.getenv("PLAYERS_P
     cli::cli_abort("No valid url provided in arg {.arg load_from}. \\
                    Do you need to run {.run Sys.setenv(\"PLAYERS_PFR_BASE\")}?")
   }
-  undercover_response <- undercover::scrapeops_request(load_from)
+  undercover_response <- load_from |>
+    undercover::scrapeops_request(
+      scrapeops_options = list(optimize_request = "TRUE"),
+      retry_delay = 5L,
+      retry_times = 7L
+    )
   pfr_players <- attr(undercover_response, "response") |>
     httr::content(as = "text") |>
     data.table::fread(showProgress = FALSE) |>
