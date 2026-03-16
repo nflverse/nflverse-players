@@ -146,7 +146,8 @@ players_ngs_release <- function(overwrite = !interactive()){
     httr2::req_retry() |>
     httr2::req_perform() |>
     httr2::resp_body_json(simplifyVector = TRUE) |>
-    getElement("teamPlayers")
+    getElement("teamPlayers") |>
+    tibble::as_tibble()
 
   # API RETURNS EMPTY DATA INSTEAD OF A FAILURE. SO WE HAVE TO QUIT HERE IF THE
   # DATAFRAME IS EMPTY
