@@ -105,7 +105,7 @@ players_build_dataset <- function(release = FALSE){
       file_name = "players",
       nflverse_type = "nflverse Players Data",
       release_tag = "players",
-      file_types = c("rds", "csv", "parquet", "qs", "csv.gz"),
+      file_types = c("rds", "csv", "parquet", "csv.gz"),
       repo = "nflverse/nflverse-data"
     )
   } else if (isTRUE(release) && is_duplicated(check)) {
