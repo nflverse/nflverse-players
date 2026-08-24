@@ -99,10 +99,14 @@ players_draft_release <- function(overwrite = !interactive()){
   # Make sure PFR doesn't get mad at us
   Sys.sleep(3)
 
-  raw_html <- httr2::request("https://www.pro-football-reference.com/years") |>
-    httr2::req_url_path_append(year, "draft.htm") |>
-    httr2::req_perform() |>
-    httr2::resp_body_html() |>
+  undercover_response <- glue::glue("https://www.pro-football-reference.com/years/{year}/draft.htm") |>
+    undercover::scrapeops_request(
+      scrapeops_options = list(optimize_request = "TRUE")
+    )
+
+  raw_html <- attr(undercover_response, "response") |>
+    httr::content(as = "text") |>
+    xml2::read_html() |>
     xml2::xml_find_all("//table/tbody/tr[not(@class='thead')]")
 
   draft_round <- raw_html |>
