@@ -1,5 +1,17 @@
 [
   {
+    "gsis_id": "WIL752823",
+    "pfr_id": "WilsMi21"
+  },
+  {
+    "gsis_id": "HAR154908",
+    "pfr_id": "HargJi21"
+  },
+  {
+    "gsis_id": "BRO628728",
+    "pfr_id": "BrowRo02"
+  },
+  {
     "gsis_id": "00-0041533",
     "pfr_id": "JohnCh09"
   },
@@ -617,6 +629,7 @@
   },
   {
     "gsis_id": "00-0040317",
+    "pfr_id": "JoneJa16",
     "pff_id": "157518"
   },
   {
@@ -2237,6 +2250,10 @@
     "pff_id": "75940"
   },
   {
+    "gsis_id": "00-0035944",
+    "pfr_id": "WillJo16"
+  },
+  {
     "gsis_id": "00-0035929",
     "pff_id": "43219"
   },
@@ -2409,6 +2426,10 @@
   {
     "gsis_id": "00-0035658",
     "pff_id": "39668"
+  },
+  {
+    "gsis_id": "00-0035629",
+    "pfr_id": "WillJo10"
   },
   {
     "gsis_id": "00-0035605",
