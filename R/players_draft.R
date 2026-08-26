@@ -99,7 +99,11 @@ players_draft_release <- function(overwrite = !interactive()){
   # Make sure PFR doesn't get mad at us
   Sys.sleep(3)
 
-  undercover_response <- glue::glue("https://www.pro-football-reference.com/years/{year}/draft.htm") |>
+  undercover_response <- paste0(
+    "https://www.pro-football-reference.com/years/",
+    year,
+    "/draft.htm"
+  ) |>
     undercover::scrapeops_request(
       scrapeops_options = list(optimize_request = "TRUE")
     )
