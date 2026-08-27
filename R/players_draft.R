@@ -15,7 +15,12 @@
 players_draft_release <- function(overwrite = !interactive()){
   draft_files <- .draft_download(overwrite = overwrite)
   draft <- purrr::map(draft_files, readRDS) |>
-    purrr::list_rbind()
+    purrr::list_rbind() |>
+    dplyr::mutate(
+      join_id = data.table::fifelse(is.na(esb_id), pfr_id, esb_id),
+      pfr_id = NULL,
+      esb_id = NULL
+    )
 
   nflversedata::nflverse_save(
     draft,
@@ -54,14 +59,26 @@ players_draft_release <- function(overwrite = !interactive()){
   if (!dir.exists(draft_dir)) dir.create(draft_dir)
 
   # returns "failed_{year}" if the scrape failed
-  file_paths <- purrr::map_chr(years, function(s, draft_dir){
-    save_to <- file.path(draft_dir, paste0("draft_", s, ".rds"))
-    d <- purrr::possibly(.draft_scrape, otherwise = .draft_template())(s)
-    if (any(is.na(d$draft_year))) return(paste0("failed_", s))
-    saveRDS(d, save_to)
-    save_to
-  }, draft_dir = draft_dir, .progress = FALSE)
-
+  file_paths <- purrr::map_chr(
+    years,
+    function(s, draft_dir) {
+      save_to <- file.path(draft_dir, paste0("draft_", s, ".rds"))
+      d <- purrr::possibly(
+        # especially due to missing pfr_id <-> gsis_id mappings,
+        # using pfr draft data wasn't satisfying. That's why we use api draft data
+        # whenever possible, i.e. for all years 2008+
+        if (s >= 2008) .draft_query else .draft_scrape,
+        otherwise = .draft_template()
+      )(s)
+      if (any(is.na(d$draft_year))) {
+        return(paste0("failed_", s))
+      }
+      saveRDS(d, save_to)
+      save_to
+    },
+    draft_dir = draft_dir,
+    .progress = FALSE
+  )
   # failed scrapes returned failed_{year}". Capture them here for reporting and
   # drop the paths. Exit if no files are left
   # This happens, when we try to scrape a new draft where data isn't ready yet
@@ -142,6 +159,30 @@ players_draft_release <- function(overwrite = !interactive()){
   cli::cli_progress_done()
 
   tbl
+}
+
+.draft_query <- function(year) {
+  df <- nflapi::nflapi_draft_report(year = year)
+  df |>
+    dplyr::mutate(
+      esb_id = .draft_extract_esb(person_id),
+      draft_team = unname(team)
+    ) |>
+    dplyr::select(
+      esb_id,
+      draft_year = year,
+      draft_round,
+      draft_pick = draft_number_overall,
+      draft_team
+    )
+}
+
+.draft_extract_esb <- function(id_vec) {
+  name_abbr <- gsisdecoder::decode_ids(id_vec) |> substr(1, 3)
+  id_no <- stringr::str_remove_all(id_vec, "-") |>
+    stringr::str_sub(11, 16)
+  esb_id <- paste0(name_abbr, id_no)
+  esb_id
 }
 
 .draft_template <- function(...){

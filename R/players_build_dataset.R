@@ -36,10 +36,10 @@ players_build_dataset <- function(release = FALSE){
     remove_duplicated("pff_id")
 
   draft <- players_download("draft") |>
-    dplyr::filter(!is.na(pfr_id)) |>
+    dplyr::filter(!is.na(join_id)) |>
     # Bo Jackson and Craig Erickson got drafted twice and we need to avoid
     # duplicates. So we consider the later draft as actual draft
-    dplyr::slice_max(draft_year, by = pfr_id) |>
+    dplyr::slice_max(draft_year, by = join_id) |>
     dplyr::mutate(
       draft_team = nflreadr::clean_team_abbrs(draft_team)
     )
@@ -63,8 +63,15 @@ players_build_dataset <- function(release = FALSE){
       pff |> dplyr::select(pff_id, pff_position, pff_status),
       by = "pff_id"
     ) |>
+    # yes we join draft twice because draft data has mixed IDs.
+    # 2006+ is ESB ID, while the years before are PFR ID
     dplyr::left_join(
-      draft, by = "pfr_id"
+      draft, by = c("pfr_id" = "join_id")
+    ) |>
+    dplyr::rows_update(
+      draft |> dplyr::rename("esb_id" = "join_id"),
+      by = "esb_id",
+      unmatched = "ignore"
     ) |>
     dplyr::left_join(
       ngs, by = "gsis_id"
@@ -77,9 +84,20 @@ players_build_dataset <- function(release = FALSE){
     upload_no_overwrites(release = release) |>
     players_manual_overwrite() |>
     fix_headshot_url() |>
-    # need to update draft data for players where pfr IDs are fixed
-    # through players_manual_overwrite
-    dplyr::rows_update(draft, by = "pfr_id", unmatched = "ignore") |>
+    # need to update draft data for players where player IDs are fixed
+    # through players_manual_overwrite. dplyr::rows_update forces the key
+    # column to be existent in both dataframes. That's why we do it twice and
+    # rename the join ID to match the primary key
+    dplyr::rows_update(
+      draft |> dplyr::rename("pfr_id" = "join_id"),
+      by = "pfr_id",
+      unmatched = "ignore"
+    ) |>
+    dplyr::rows_update(
+      draft |> dplyr::rename("esb_id" = "join_id"),
+      by = "esb_id",
+      unmatched = "ignore"
+    ) |>
     dplyr::arrange(last_name, first_name, gsis_id) |>
     .convert_ids()
 
