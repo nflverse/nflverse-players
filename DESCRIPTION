@@ -1,6 +1,6 @@
 Package: nflverse.players
 Title: Create 'nflverse' Players Data
-Version: 0.1.4
+Version: 0.1.5
 Authors@R: c(
     person("Sebastian", "Carl", , "mrcaseb@gmail.com", role = c("aut", "cre")),
     person("Tan", "Ho", , "tan@tanho.ca", role = "aut",
@@ -15,6 +15,7 @@ Imports:
     curl,
     data.table,
     dplyr,
+    gsisdecoder,
     httr,
     httr2,
     janitor,
@@ -25,6 +26,7 @@ Imports:
     nflversedata,
     purrr,
     rlang,
+    stringr,
     tibble,
     tidyr,
     tidyselect,
