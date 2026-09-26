@@ -124,7 +124,10 @@ players_espn_release <- function(players_espn_full_rebuild = Sys.getenv("PLAYERS
     dplyr::filter(!grepl("\\[|\\]|Team", display_name, perl = TRUE)) |>
     # WE WANT TO JOIN BY DATE OF BIRTH AND MAKE SURE WE HAVE IT AS A DATE OBJECT
     dplyr::mutate(
-      dob = as.Date(date_of_birth)
+      dob = as.Date(date_of_birth),
+      # API STARTED TO RETURN SLUG IN 2026. WE DON't NEED IT AND IT BREAKS
+      # ROWS_UPSERT
+      slug = NULL
     ) |>
     as.data.frame()
 
