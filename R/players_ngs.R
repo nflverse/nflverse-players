@@ -136,18 +136,24 @@ players_ngs_release <- function(overwrite = !interactive()){
 }
 
 .ngs_save_raw_players <- function(season, file_dir){
-  players_ngs <- nflapi::init_ngs_request() |>
-    httr2::req_url_path_append("roster", "current") |>
-    httr2::req_url_query(
-      teamId = "ALL",
-      season = season,
-      status = "ALL"
-    ) |>
-    httr2::req_retry() |>
-    httr2::req_perform() |>
-    httr2::resp_body_json(simplifyVector = TRUE) |>
-    getElement("teamPlayers") |>
-    tibble::as_tibble()
+  reqs <- purrr::map(
+    .x = teams$team_id,
+    .f = .create_team_roster_request,
+    season = season
+  )
+
+  raw_resps <- httr2::req_perform_parallel(reqs)
+
+  players_ngs <- httr2::resps_successes(raw_resps) |>
+    purrr::map(function(x) {
+      out <- x |>
+        httr2::resp_body_json(simplifyVector = TRUE) |>
+        getElement("teamPlayers") |>
+        tibble::as_tibble()
+      out <- if (length(out)) out else NULL
+      out
+    }) |>
+    purrr::list_rbind()
 
   # API RETURNS EMPTY DATA INSTEAD OF A FAILURE. SO WE HAVE TO QUIT HERE IF THE
   # DATAFRAME IS EMPTY
@@ -171,4 +177,15 @@ players_ngs_release <- function(overwrite = !interactive()){
 
 .ngs_is_valid_season <- function(season){
   season %in% seq(2016, nflreadr::most_recent_season(roster = TRUE))
+}
+
+.create_team_roster_request <- function(season, team_id){
+  nflapi::init_ngs_request() |>
+    httr2::req_url_path_append("roster", "current") |>
+    httr2::req_url_query(
+      teamId = team_id,
+      season = season,
+      status = "ALL"
+    ) |>
+    httr2::req_retry(max_tries = 3L)
 }
