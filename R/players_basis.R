@@ -28,7 +28,13 @@ players_basis_release <- function(overwrite = !interactive()){
       player_gsis_id = dplyr::if_else(is.na(player_gsis_id), player_esb_id, player_gsis_id)
     ) |>
     dplyr::filter(!is.na(player_gsis_id)) |>
-    dplyr::mutate(rookie_season = dplyr::first(season), .by = player_gsis_id) |>
+    dplyr::mutate(
+      rookie_season = dplyr::first(season),
+      # we saw some rare problems where the birth date of the final season
+      # was wrong (#26). That's why we use mode on birth date here.
+      player_birth_date = nflreadr::stat_mode(player_birth_date, na.rm = TRUE),
+      .by = player_gsis_id
+    ) |>
     dplyr::slice_max(tibble::tibble(season, dplyr::desc(player_status)), n = 1, by = player_gsis_id) |>
     dplyr::mutate_if(is.list, ~ purrr::map_chr(.x, ~ unlist(.x) |> paste(collapse = "; "))) |>
     dplyr::rename_with(~ gsub("player_", "", .x)) |>
