@@ -21,7 +21,6 @@ jobs:
       fail-fast: false
 
     env:
-      GITHUB_PAT: ${{ secrets.NFLVERSE_GH_TOKEN }}
       R_KEEP_PKG_SOURCE: yes
 
     steps:
@@ -33,7 +32,19 @@ jobs:
         with:
           use-public-rspm: true
 
+      # read-only token for the private dependencies (nflapi,
+      # nflverse-espn). Fork PRs get no secrets, so it's skipped there.
+      - id: read-token
+        if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository
+        uses: nflverse/actions/app-token@v1
+        with:
+          client-id: ${{ vars.NFLVERSE_APP_CLIENT_ID }}
+          private-key: ${{ secrets.NFLVERSE_APP_PRIVATE_KEY }}
+          repositories: nflapi, nflverse-espn
+
       - uses: r-lib/actions/setup-r-dependencies@v2
+        env:
+          GITHUB_PAT: ${{ steps.read-token.outputs.token }}
         with:
           extra-packages: any::rcmdcheck
           needs: check
